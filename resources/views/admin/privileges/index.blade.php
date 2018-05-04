@@ -1,20 +1,9 @@
 @extends('admin.layout')
-
 @section('securityContent')
 @include('confirmation_modal', ['headerText' => '', 'bodyText' => ''])
-<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-2">
-            <div class="card">
-                <div class="card-header">@lang('messages.Actions')</div>
-                <div class="card-body">
-					<ul class="nav flex-column nav-pills">
-					  <li class="nav-item">
-						<a class="nav-link active" href="#">Opción 1</a>
-					  </li>
-					</ul>
-                </div>
-            </div>
+            @include('admin.actions')
         </div>
 		<div class="col-md-10">
             <div class="card">

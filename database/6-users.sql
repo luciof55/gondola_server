@@ -1,0 +1,1 @@
+INSERT INTO `users` (`id`,`profile_id`,`name`,`email`,`password`,`remember_token`,`created_at`,`updated_at`,`deleted_at`) VALUES (21,1,'admin','admin@localhost.com','$2y$10$dAIyaqurpCy70OKh68IkweDq/wVwd7c3l5lav62E6E.XB4gYlzsKS',NULL,'2018-05-02 14:53:18','2018-05-02 14:53:18',NULL);

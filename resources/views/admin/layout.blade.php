@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('header')
 	<nav class="navbar navbar-expand-sm navbar-light bg-light">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSecurity" aria-controls="navbarSecurity" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,11 +23,9 @@
 		</div>
     </nav>
 @endsection
-
 @section('content')
 @yield('securityContent')
 @endsection
-
 @section('footer')
 <div class="row justify-content-center">
 	FOOTER

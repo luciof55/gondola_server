@@ -11,7 +11,7 @@ class EloquentBaseRepository extends AbstractRepository
 	public function select($array_select, $paginate = null) {
 		Log::info('Function all.');
 		$query = $this->entity->select($array_select);
-		return $this->processPagination($query, $paginate);
+		return $paginate ? $query->paginate($paginate) : $query->get();
 	}
 	
 	public function paginateWithTrashed($query = null, $paginate = null, $orderAttributes = null, $filterAttributes = null, $page = null)

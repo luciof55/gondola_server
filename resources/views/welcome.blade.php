@@ -1,29 +1,28 @@
 @extends('layouts.app')
-
-
 @section('header')
-<div class="row justify-content-center">
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
 	UN MENU
-</div>
+</nav>
 @endsection
-
 @section('content')
 <div class="row justify-content-center">
 	<div class="col-md-2">
-		<div class="card">
-			<div class="card-header">@lang('messages.Actions')</div>
-		</div>
+		@include('actions')
 	</div>
 	<div class="col-md-10">
-		@if (session('unauthorized'))
-			<div class="alert alert-danger">
-				{{ session('unauthorized') }}
+		<div class="card">
+			<div class="card-header"><nav class="navbar navbar-expand-sm navbar-dark">NAVBAR</nav></div>
+			<div class="card-body">
+				@if (session('unauthorized'))
+					<div class="alert alert-danger">
+						{{ session('unauthorized') }}
+					</div>
+				@endif
 			</div>
-		@endif
+		</div>
 	</div>
 </div>
 @endsection
-
 @section('footer')
 <div class="row justify-content-center">
 	FOOTER

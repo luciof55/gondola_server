@@ -1,7 +1,7 @@
 {
     "name": "laravel/laravel",
-    "description": "UpSales: CRM",
-    "keywords": ["framework", "laravel", "UpSales", "CRM"],
+    "description": "Laravel Blankapp",
+    "keywords": ["framework", "laravel"],
     "license": "MIT",
     "type": "project",
     "require": {
