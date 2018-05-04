@@ -20,4 +20,8 @@ DirectoryIndex server.php index.php
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^ server.php [QSA,L]
+  
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ server.php [QSA,L]
+  
 </IfModule>
