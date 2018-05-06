@@ -12,11 +12,21 @@
 			  </button>
 			  <div class="collapse navbar-collapse" id="navbmenusec">
 				<ul class="navbar-nav mr-auto">
+					@if (Gate::allows('module', 'users'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('users.index')}}">@lang('messages.Users')</a></li>
+					@endif
+					@if (Gate::allows('module', 'profiles'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('profiles.index')}}">@lang('messages.Profiles')</a></li>
+					@endif
+					@if (Gate::allows('module', 'roles'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('roles.index')}}">@lang('messages.Roles')</a></li>
+					@endif
+					@if (Gate::allows('module', 'profilesroles'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('profilesroles.index')}}">@lang('messages.ProfilesRoles')</a></li>
+					@endif
+					@if (Gate::allows('module', 'privileges'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('privileges.index')}}">@lang('messages.Privileges')</a></li>
+					@endif
 				 </ul>
 			  </div>
 			</ul>

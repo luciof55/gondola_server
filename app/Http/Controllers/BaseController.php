@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
-
+use App\Rules\ForeignKeyRule;
+use App\Rules\RestoreRule;
 
 class BaseController extends Controller
 {	
@@ -120,7 +121,10 @@ class BaseController extends Controller
         try {
 			$entity = $this->repository->entity();
 			Log::info('Execute '. $entity.' store.');
-			$this->validator_create($request->all())->validate();
+			$validator = $this->validator_create($request->all());
+			if (isset($validator)) {
+				$validator->validate();
+			}
 			$this->repository->create($request->all());
 			return $this->index($request, 'Successfully saved!');
 		} catch (Exception $e) {
@@ -213,7 +217,10 @@ class BaseController extends Controller
 		try {
 			$entity = $this->repository->entity();
 			Log::info('Execute '. $entity.' update.');
-			$this->validator_update($request->all())->validate();
+			$validator = $this->validator_update($request->all());
+			if (isset($validator)) {
+				$validator->validate();
+			}
 			$id = $request->input('id');
 			$this->repository->update($id, $request->all());
 			return $this->index($request, 'Successfully updated!');
@@ -241,6 +248,10 @@ class BaseController extends Controller
 			//Log::info('Strip URL: '. $url);
 			$id = substr($url, strrpos($url, '/') + 1);
 			//Log::info('ID: '. $id);
+			$validator = $this->validator_enable($request->all());
+			if (isset($validator)) {
+				$validator->validate();
+			}
 			$this->repository->updateSoftDelete($id);
 			$message = 'Successfully updated!';
 		} else {
@@ -282,19 +293,23 @@ class BaseController extends Controller
 	}
 	
 	public function getIndexView() {
-		return 'admin.'.$this->getRouteResource().'.index';
+		return $this->getViewBase().$this->getRouteResource().'.index';
 	}
 	
 	public function getCreateView() {
-		return 'admin.'.$this->getRouteResource().'.form';
+		return $this->getViewBase().$this->getRouteResource().'.form';
 	}
 	
 	public function getEditView() {
-		return 'admin.'.$this->getRouteResource().'.form';
+		return $this->getViewBase().$this->getRouteResource().'.form';
 	}
 	
 	public function getShowView() {
-		return 'admin.'.$this->getRouteResource().'.show';
+		return $this->getViewBase().$this->getRouteResource().'.show';
+	}
+	
+	public function getViewBase() {
+		return 'admin.';
 	}
 	
 	public function getEditActionName() {
@@ -355,4 +370,59 @@ class BaseController extends Controller
 	protected function referenceData(\Illuminate\Http\Request $request, \Illuminate\Support\Collection $collection) {
 		//
 	}
+	
+	/**
+     * Get a validator for an incoming Account request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator_create(array $data)
+    {
+    }
+	
+	/**
+     * Get a validator for an incoming account request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator_update(array $data)
+    {
+    }
+	
+	/**
+     * Get a validator for an incoming user request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator_delete(array $data)
+    {
+		$entity = $this->repository->entity();
+		Log::info('Execute '. $entity.' delete validator.');
+        Log::info('ID: '.$data['id']);
+		return Validator::make($data, [
+			'id' => [new ForeignKeyRule($this->repository, $data),],
+		]);
+    }
+	
+	/**
+     * Get a validator for an incoming account request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator_enable($data)
+    {
+		$entity = $this->repository->entity();
+		Log::info('Execute '. $entity.' enable validator.');
+        Log::info('ID: '.$data['id']);
+		$command = $this->repository->find($data['id']);
+		if ($command->trashed()) {
+			return Validator::make($data, [
+				'id' => [new RestoreRule($this->repository, $data, $command),],
+			]);
+		}
+    }
 }

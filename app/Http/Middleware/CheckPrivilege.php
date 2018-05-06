@@ -17,8 +17,8 @@ class CheckPrivilege
      */
     public function handle($request, Closure $next, $resourceKey)
     {
-		Log::info('CheckPrivilege - Handle - Path: '.$request->path());
-		Log::info('CheckPrivilege - Handle - Resource: '.$resourceKey);
+		Log::debug('CheckPrivilege - Handle - Path: '.$request->path());
+		Log::debug('CheckPrivilege - Handle - Resource: '.$resourceKey);
         if (! $request->user()->hasResourceAccess($resourceKey)) {
 			return redirect('/')->with('unauthorized', 'This action is unauthorized!');
         }

@@ -7,6 +7,26 @@ use Illuminate\Support\Facades\Log;
 
 class EloquentBaseRepository extends AbstractRepository
 {
+	public function canDelete($command) {
+		if (method_exists($command, 'canDelete')) {
+			return $command->canDelete();
+		} else {
+			return true;
+		}
+	}
+	
+	public function canRestore($command) {
+		$result = collect([]);
+		$result->put('message', null);
+		
+		if (method_exists($command, 'canRestore')) {
+			$result->put('status', $command->canRestore());	
+		} else {
+			$result->put('status', true);	
+		}
+		
+		return $result;
+	}
 
 	public function select($array_select, $paginate = null) {
 		Log::info('Function all.');
@@ -109,12 +129,14 @@ class EloquentBaseRepository extends AbstractRepository
 		if ($this->isSoftDelete()) {
 			$command = $this->find($id);
 			if ($command->trashed()) {
-				$command->restore();
-				Log::info('Profile Restore.');
+				if ($this->canRestore($command)) {
+					$command->restore();
+					Log::info('Command Restore.');
+				}
 			} else {
 				$this->softDeleteCascade($command);
 				$command->delete();
-				Log::info('Profile Deleted.');
+				Log::info('Command Deleted.');
 			}
 		}
 	}

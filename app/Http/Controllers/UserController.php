@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Repositories\Contracts\UserRepository;
-use App\Rules\ForeignKeyRule;
 use App\Repositories\Contracts\ProfileRepository;
 
 class UserController extends BaseController
@@ -31,21 +30,6 @@ class UserController extends BaseController
         return Validator::make($data, [
             'name' => 'bail|required|string|max:150|unique:roles,name,'.$data['id'],
         ]);
-    }
-	
-	/**
-     * Get a validator for an incoming user request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator_delete(array $data)
-    {
-		Log::info('Execute User delete validator.');
-        Log::info('ID: '.$data['id']);
-		return Validator::make($data, [
-			'id' => [new ForeignKeyRule($this->repository, $data),],
-		]);
     }
 	
     public function store(\Illuminate\Http\Request $request)
@@ -100,6 +84,10 @@ class UserController extends BaseController
 					$message = 'Cannot disable yourself!';
 					return $this->index($request, $message);
 				}
+			}
+			$validator = $this->validator_enable($request->all());
+			if (isset($validator)) {
+				$validator->validate();
 			}
 			$this->repository->updateSoftDelete($id);
 			$message = 'Successfully updated!';

@@ -43,7 +43,7 @@ class RegisterController extends Controller
     public function __construct(\App\Repositories\Contracts\ProfileRepository $profileRepository)
     {
 		$this->profileRepository = $profileRepository;
-        $this->middleware('guest');
+        $this->middleware('auth');
     }
 
     /**

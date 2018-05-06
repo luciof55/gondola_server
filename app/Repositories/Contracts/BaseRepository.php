@@ -19,4 +19,8 @@ interface BaseRepository
 	 public function isSoftDelete();
 	  
 	 public function updateSoftDelete($id);
+	 
+	 public function canDelete($command);
+	 
+	 public function canRestore($command);
 }

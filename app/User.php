@@ -60,7 +60,7 @@ class User extends Authenticatable
 		$resources = collect([]);
 		foreach($this->profile->roles as $role) {
 			foreach($role->resources as $resource) {
-				Log::info('User - getResources Adding: '.$resource->key_name);
+				Log::debug('User - getResources Adding: '.$resource->key_name);
 				$resources->put($resource->key_name, $resource);
 			}
 		}
@@ -68,7 +68,7 @@ class User extends Authenticatable
 	}
 	
 	public function hasResourceAccess($resourcekey) {
-		Log::info('User - hasResourceAccess find: '.$resourcekey);
+		Log::debug('User - hasResourceAccess find: '.$resourcekey);
 		return $this->getResources()->has($resourcekey);
 	}
 	

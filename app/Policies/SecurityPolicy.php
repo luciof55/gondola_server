@@ -18,7 +18,7 @@ class SecurityPolicy
      */
     public function enable(User $user, $entity)
     {
-		Log::info('SecurityPolicy - enable: '.$entity);
+		Log::debug('SecurityPolicy - enable: '.$entity);
 		$resourceKey = $entity.'_enable';
         return $user->hasResourceAccess($resourceKey);
     }
@@ -31,7 +31,7 @@ class SecurityPolicy
      */
     public function remove(User $user, $entity)
     {
-		Log::info('SecurityPolicy - remove: '.$entity);
+		Log::debug('SecurityPolicy - remove: '.$entity);
 		$resourceKey = $entity.'_remove';
         return $user->hasResourceAccess($resourceKey);
     }
@@ -44,7 +44,7 @@ class SecurityPolicy
      */
     public function create(User $user, $entity)
     {
-		Log::info('SecurityPolicy - create: '.$entity);
+		Log::debug('SecurityPolicy - create: '.$entity);
 		$resourceKey = $entity.'_create';
         return $user->hasResourceAccess($resourceKey);
     }
@@ -57,7 +57,7 @@ class SecurityPolicy
      */
     public function store(User $user, $entity)
     {
-		Log::info('SecurityPolicy - store: '.$entity);
+		Log::debug('SecurityPolicy - store: '.$entity);
 		$resourceKey = $entity.'_create';
         return $user->hasResourceAccess($resourceKey);
     }
@@ -70,7 +70,7 @@ class SecurityPolicy
      */
     public function edit(User $user, $entity)
     {
-		Log::info('SecurityPolicy - edit: '.$entity);
+		Log::debug('SecurityPolicy - edit: '.$entity);
 		$resourceKey = $entity.'_edit';
         return $user->hasResourceAccess($resourceKey);
     }
@@ -83,7 +83,7 @@ class SecurityPolicy
      */
     public function update(User $user, $entity)
     {
-		Log::info('SecurityPolicy - update: '.$entity);
+		Log::debug('SecurityPolicy - update: '.$entity);
 		$resourceKey = $entity.'_edit';
         return $user->hasResourceAccess($resourceKey);
     }
@@ -96,7 +96,7 @@ class SecurityPolicy
      */
     public function view(User $user, $entity)
     {
-		Log::info('SecurityPolicy - view: '.$entity);
+		Log::debug('SecurityPolicy - view: '.$entity);
 		$resourceKey = $entity.'_view';
         return $user->hasResourceAccess($resourceKey);
     }
@@ -109,8 +109,21 @@ class SecurityPolicy
      */
     public function show(User $user, $entity)
     {
-		Log::info('SecurityPolicy - show: '.$entity);
+		Log::debug('SecurityPolicy - show: '.$entity);
 		$resourceKey = $entity.'_show';
+        return $user->hasResourceAccess($resourceKey);
+    }
+	
+	/**
+     * Determine if the user can access to the module.
+     *
+     * @param  \App\User  $user
+     * @return bool
+     */
+    public function module(User $user, $entity)
+    {
+		Log::debug('SecurityPolicy - module: '.$entity);
+		$resourceKey = $entity;
         return $user->hasResourceAccess($resourceKey);
     }
 	
