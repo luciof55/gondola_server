@@ -18,10 +18,15 @@ INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (22,'profilesroles_create','profilesroles_create',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (23,'profilesroles_view','profilesroles_view',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (24,'profilesroles_remove','profilesroles_remove',NULL,NULL);
-INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (25,'security_show','Administrar Seguridad',NULL,NULL);
+INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (25,'security','Administrar Seguridad',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (26,'users','Usuarios',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (27,'users_create','Crear Usuarios',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (28,'users_view','Mostrar Usuario',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (29,'users_edit','Editar Usuario',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (30,'users_enable','Habilitar/Deshabilitar Usuarios',NULL,NULL);
 INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (31,'users_remove','Eliminar Usuario',NULL,NULL);
+INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (32,'menuitems','Administrar menu items',NULL,NULL);
+INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (33,'menuitems_create','Crear menu item',NULL,NULL);
+INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (34,'menuitems_view','Ver menu item',NULL,NULL);
+INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (35,'menuitems_edit','Editar menu item',NULL,NULL);
+INSERT INTO `resources` (`id`,`key_name`,`display_name`,`created_at`,`updated_at`) VALUES (36,'menuitems_remove','Eliminar menu item',NULL,NULL);

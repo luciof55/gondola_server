@@ -46,6 +46,14 @@ Route::post('privileges/store', 'PrivilegeController@store')->middleware('checkp
 Route::get('privileges/{id}', 'PrivilegeController@show')->middleware('checkprivilege:privileges_view')->name('privileges.show');
 Route::get('privileges/{id}/delete', 'PrivilegeController@destroy')->middleware('checkprivilege:privileges_remove')->name('privileges.delete');
 
+Route::get('menuitems', 'MenuItemController@index')->middleware('checkprivilege:menuitems')->name('menuitems.index');
+Route::get('menuitems/create', 'MenuItemController@create')->middleware('checkprivilege:menuitems_create')->name('menuitems.create');
+Route::post('menuitems/store', 'MenuItemController@store')->middleware('checkprivilege:menuitems_create')->name('menuitems.store');
+Route::put('menuitems/{id}', 'MenuItemController@update')->middleware('checkprivilege:menuitems_edit')->name('menuitems.update');
+Route::get('menuitems/{id}/edit', 'MenuItemController@edit')->middleware('checkprivilege:menuitems_edit')->name('menuitems.edit');
+Route::get('menuitems/{id}', 'MenuItemController@show')->middleware('checkprivilege:menuitems_view')->name('menuitems.show');
+Route::get('menuitems/{id}/delete', 'MenuItemController@destroy')->middleware('checkprivilege:menuitems_remove')->name('menuitems.delete');
+
 Route::get('users', 'UserController@index')->middleware('checkprivilege:users')->name('users.index');
 Route::put('users/{id}', 'UserController@update')->middleware('checkprivilege:users_edit')->name('users.update');
 Route::get('users/{id}/edit', 'UserController@edit')->middleware('checkprivilege:users_edit')->name('users.edit');
@@ -53,7 +61,7 @@ Route::get('users/{id}', 'UserController@show')->middleware('checkprivilege:user
 Route::get('users/{id}/enable', 'UserController@enable')->middleware('checkprivilege:users_enable')->name('users.enable');
 Route::get('users/{id}/delete', 'UserController@destroy')->middleware('checkprivilege:users_remove')->name('users.delete');
 
-Route::get('/security', 'SecurityController@index')->middleware('checkprivilege:security_show')->name('security');
+Route::get('/security', 'SecurityController@index')->middleware('checkprivilege:security')->name('security');
 
 Route::get('/contact', 'ContactController@contact')->name('contact');
 Route::post('/contact', 'ContactController@process_contact')->name('contact');

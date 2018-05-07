@@ -32,4 +32,11 @@ return [
 	'Privilege' => 'Privilegio',
 	'Users' => 'Usuarios',
 	'User' => 'Usuario',
+	'MenuItems' => 'Entrada de Menúes',
+	'MenuItem' => 'Entrada de Menú',
+	'MenuType' => 'Tipo de Menú',
+	
+	'Main' => 'Principal',
+	'Secondary' => 'Secundario',
+	'Custom' => 'Personlizado',
 ];

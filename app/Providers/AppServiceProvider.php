@@ -52,5 +52,9 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->bind(
 			'App\Repositories\Contracts\UserRepository', 'App\Repositories\Eloquent\EloquentUserRepository'
 		);
+		
+		$this->app->bind(
+			'App\Repositories\Contracts\MenuItemRepository', 'App\Repositories\Eloquent\EloquentMenuItemRepository'
+		);
     }
 }

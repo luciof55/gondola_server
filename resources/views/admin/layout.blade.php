@@ -27,6 +27,9 @@
 					@if (Gate::allows('module', 'privileges'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('privileges.index')}}">@lang('messages.Privileges')</a></li>
 					@endif
+					@if (Gate::allows('module', 'menuitems'))
+					<li class="nav-item active"><a class="nav-link" href="{{route('menuitems.index')}}">@lang('messages.MenuItems')</a></li>
+					@endif
 				 </ul>
 			  </div>
 			</ul>
