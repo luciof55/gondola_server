@@ -71,23 +71,25 @@
                             </div>
                         </div>
 						
-						<div class="form-group row">
-							
-                            <label for="profile_id" class="col-md-4 col-form-label text-md-right">@lang('messages.Profile')</label>
-                            <div class="col-md-6">
-								@if ($errors->has('profile_id'))
-									{{ Form::select('profile_id', $profiles, $profile_id, ['required', 'autofocus', 'placeholder' => 'Pick a profile...', 'class' => 'form-control is-invalid'])}}
-								@else
-									{{ Form::select('profile_id', $profiles, $profile_id, ['required', 'autofocus', 'placeholder' => 'Pick a profile...', 'class' => 'form-control'])}}
-								@endif
-								@if ($errors->has('profile_id'))
-                                    <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('profile_id') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
+						@if (Auth::check() && Gate::allows('create', 'users'))
+							<div class="form-group row">
+								
+								<label for="profile_id" class="col-md-4 col-form-label text-md-right">@lang('messages.Profile')</label>
+								<div class="col-md-6">
+									@if ($errors->has('profile_id'))
+										{{ Form::select('profile_id', $profiles, $profile_id, ['required', 'autofocus', 'placeholder' => 'Pick a profile...', 'class' => 'form-control is-invalid'])}}
+									@else
+										{{ Form::select('profile_id', $profiles, $profile_id, ['required', 'autofocus', 'placeholder' => 'Pick a profile...', 'class' => 'form-control'])}}
+									@endif
+									@if ($errors->has('profile_id'))
+										<span class="invalid-feedback">
+											<strong>{{ $errors->first('profile_id') }}</strong>
+										</span>
+									@endif
+								</div>
+							</div>
+						@endif
+						
                         <div class="form-group row mb-0">
                             @include('admin.down_buttons', ['btn_save' => true])
                         </div>

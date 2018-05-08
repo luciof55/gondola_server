@@ -1,1 +1,2 @@
 INSERT INTO `profiles` (`id`,`name`,`deleted_at`,`created_at`,`updated_at`) VALUES (1,'Admin',NULL,'2018-04-18 21:15:34','2018-04-30 03:46:05');
+INSERT INTO `profiles` (`id`,`name`,`deleted_at`,`created_at`,`updated_at`) VALUES (2,'Public',NULL,'2018-04-18 21:15:34','2018-04-30 03:46:05');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +26,7 @@ class RegisterController extends Controller
     */
 
     use RegistersUsers;
-
+	
     /**
      * Where to redirect users after registration.
      *
@@ -43,7 +44,7 @@ class RegisterController extends Controller
     public function __construct(\App\Repositories\Contracts\ProfileRepository $profileRepository)
     {
 		$this->profileRepository = $profileRepository;
-        $this->middleware('auth');
+        $this->middleware('guest');
     }
 
     /**
@@ -90,12 +91,15 @@ class RegisterController extends Controller
 		$command = new User();
 		
 		$page = $request->input('page');
-		$actionBack = action('UserController@index');
+		if (Auth::check()) {
+			$actionBack = action('UserController@index');
+		} else {
+			$actionBack = action('HomeController@index');
+		}
 		
 		$filterAttributes = $command->getFilterAttributes();
 		$collectionFilterAttributes = collect([]);
 		$this->processRequestFilters($request, $filterAttributes, null, $collectionFilterAttributes);
-		
 		
 		$collectionCreate->put('command', $command);
 		$collectionCreate->put('actionBack', $actionBack);
@@ -115,11 +119,21 @@ class RegisterController extends Controller
      */
     public function register(\Illuminate\Http\Request $request)
     {
-		$this->validator($request->all())->validate();
-
-		event(new \Illuminate\Auth\Events\Registered($user = $this->create($request->all())));
+		$data = $request->all();
 		
-		$controller = resolve('App\Http\Controllers\UserController');
+		if (!Auth::check()) {
+			$data['profile_id'] = config('app.default_public_profile');
+		}
+		
+		$this->validator($data)->validate();
+
+		event(new \Illuminate\Auth\Events\Registered($user = $this->create($data)));
+		
+		if (Auth::check()) {
+			$controller = resolve('App\Http\Controllers\UserController');
+		} else {
+			$controller = resolve('App\Http\Controllers\HomeController');
+		}
 		
 		return $controller->index($request, 'Successfully saved!');
     }

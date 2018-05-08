@@ -2,6 +2,8 @@
 
 return [
 
+	'default_public_profile' => env('DEFAULT_PUBLIC_PROFILE', '2'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

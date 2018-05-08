@@ -19,7 +19,7 @@ class CheckPrivilege
     {
 		Log::debug('CheckPrivilege - Handle - Path: '.$request->path());
 		Log::debug('CheckPrivilege - Handle - Resource: '.$resourceKey);
-        if (! $request->user()->hasResourceAccess($resourceKey)) {
+        if (!is_null($request->user()) && !$request->user()->hasResourceAccess($resourceKey)) {
 			return redirect('/')->with('unauthorized', 'This action is unauthorized!');
         }
 
