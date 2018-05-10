@@ -46,7 +46,7 @@
 						<label for="type" class="col-md-4 col-form-label text-md-right">@lang('messages.MenuType')</label>
 						<div class="col-md-6">
 							@if ($errors->has('type'))
-								{{ Form::select('resource_id', $types, $command->type, ['required', 'placeholder' => 'Pick a type...', 'class' => 'form-control is-invalid'])}}
+								{{ Form::select('type', $types, $command->type, ['required', 'placeholder' => 'Pick a type...', 'class' => 'form-control is-invalid'])}}
 							@else
 								{{ Form::select('type', $types, $command->type, ['required', 'placeholder' => 'Pick a type...', 'class' => 'form-control'])}}
 							@endif

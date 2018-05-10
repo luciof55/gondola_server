@@ -28,7 +28,7 @@ class UserController extends BaseController
     {
 		Log::info('Execute User update validator.');
         return Validator::make($data, [
-            'name' => 'bail|required|string|max:150|unique:roles,name,'.$data['id'],
+            'name' => 'bail|required|string|max:150|unique:users,name,'.$data['id'],
         ]);
     }
 	

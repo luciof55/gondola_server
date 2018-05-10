@@ -33,11 +33,18 @@ class OpenModuleController extends Controller
 			if ($modules->isNotEmpty()) {
 				$module = $modules[0];
 				$subModulesMenuItem = collect([]);
+				$user = $request->user();
+				$profilesroles = $user->profile->profilesroles;
 				foreach ($module->submodules as $submodule) {
-					$action = action('OpenSubModuleController@index', ['subModuleName' => $submodule->key]);
-					$menuItem = ['text' => $submodule->name, 'url' => $action];
-					$subModulesMenuItem->put($submodule->id, $menuItem);
-					Log::info('SubModuleMenuItem add SubModule: '. $submodule->key);
+					foreach ($profilesroles as $profileRole) {
+						if ($profileRole->role_id == $submodule->role->id) {
+							$action = action('OpenSubModuleController@index', ['subModuleName' => $submodule->key]);
+							$menuItem = ['text' => $submodule->name, 'url' => $action];
+							$subModulesMenuItem->put($submodule->id, $menuItem);
+							Log::info('SubModuleMenuItem add SubModule: '. $submodule->key);
+							break;
+						}
+					}
 				}
 				$collection->put('subModulesMenuItem', $subModulesMenuItem);
 				$collection->put('subModules', $module->submodules);
