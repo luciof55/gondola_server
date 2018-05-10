@@ -13,6 +13,9 @@
 
 Route::get('/', 'HomeController@index')->name('home');
 
+Route::get('/mod/{moduleName}', 'OpenModuleController@index')->middleware('checkprivilege:moduleName')->name('open.modules');
+Route::get('/submod/{subModuleName}', 'OpenSubModuleController@index')->middleware('checkprivilege:subModuleName')->name('open.submodules');
+
 Auth::routes();
 
 Route::get('profiles', 'ProfileController@index')->middleware('checkprivilege:profiles')->name('profiles.index');
@@ -52,6 +55,15 @@ Route::put('menuitems/{id}', 'MenuItemController@update')->middleware('checkpriv
 Route::get('menuitems/{id}/edit', 'MenuItemController@edit')->middleware('checkprivilege:menuitems_edit')->name('menuitems.edit');
 Route::get('menuitems/{id}', 'MenuItemController@show')->middleware('checkprivilege:menuitems_view')->name('menuitems.show');
 Route::get('menuitems/{id}/delete', 'MenuItemController@destroy')->middleware('checkprivilege:menuitems_remove')->name('menuitems.delete');
+
+Route::get('modules', 'ModuleController@index')->middleware('checkprivilege:modules')->name('modules.index');
+Route::get('modules/create', 'ModuleController@create')->middleware('checkprivilege:modules_create')->name('modules.create');
+Route::post('modules/store', 'ModuleController@store')->middleware('checkprivilege:modules_create')->name('modules.store');
+Route::put('modules/{id}', 'ModuleController@update')->middleware('checkprivilege:modules_edit')->name('modules.update');
+Route::get('modules/{id}/edit', 'ModuleController@edit')->middleware('checkprivilege:modules_edit')->name('modules.edit');
+Route::get('modules/{id}', 'ModuleController@show')->middleware('checkprivilege:modules_view')->name('modules.show');
+Route::get('modules/{id}/enable', 'ModuleController@enable')->middleware('checkprivilege:modules_enable')->name('modules.enable');
+Route::get('modules/{id}/delete', 'ModuleController@destroy')->middleware('checkprivilege:modules_remove')->name('modules.delete');
 
 Route::get('users', 'UserController@index')->middleware('checkprivilege:users')->name('users.index');
 Route::put('users/{id}', 'UserController@update')->middleware('checkprivilege:users_edit')->name('users.update');

@@ -11,7 +11,7 @@
 	</div>
 	<div class="col-md-10">
 		<div class="card">
-			<div class="card-header"><nav class="navbar navbar-expand-sm navbar-dark">NAVBAR</nav></div>
+			<div class="card-header"><nav class="navbar navbar-expand-sm navbar-dark">{{$subModuleName}}</nav></div>
 			<div class="card-body">
 				<div class="row"><div class="container">@include('common_status')</div></div>
 			</div>

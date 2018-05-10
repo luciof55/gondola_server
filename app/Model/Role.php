@@ -59,8 +59,12 @@ class Role extends Model
 		return $this->belongsToMany('App\Model\Resource', 'privileges');
 	}
 	
+	public function modules() {
+		return $this->belongsToMany('App\Model\Module');
+	}
+	
 	public function canDelete() {
-		return $this->profiles->isEmpty() && $this->resources->isEmpty();
+		return $this->profiles->isEmpty() && $this->resources->isEmpty() && $this->modules->isEmpty();
 	}
 	
 	public function getOrderAttributes() {

@@ -28,5 +28,11 @@ class EloquentRoleRepository extends EloquentBaseRepository implements RoleRepos
 				$privilege->delete();
 			}
 		}
+		
+		if ($role->modules->isNotEmpty()) {
+			foreach($role->modules as $module) {
+				$module->delete();
+			}
+		}
 	}
 }

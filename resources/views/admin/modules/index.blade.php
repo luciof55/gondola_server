@@ -8,8 +8,23 @@
 	<div class="col-md-10">
 		<div class="card">
 			<div class="card-header">
-				<nav class="navbar navbar-expand-sm navbar-dark">
-					@include('admin.form', ['title' => 'messages.Roles'])
+				<nav class="navbar navbar-expand-sm  navbar-dark">
+					<form id="actionForm" class="form-inline" action="{{$action}}" method="GET">
+						@csrf
+						<input type="hidden" id="_method" name="_method" value="{{ $method }}">
+						<span class="navbar-text text-dark">@lang('messages.Modules')</span>
+						<input type="hidden" id="page" name="page" value="{{ $page }}">
+						<input type="hidden" id="id" name="id" value="">
+						@foreach ($filters->keys() as $filterKey)
+							@if ($filterKey == 'name_filter')
+								<input class="form-control mr-sm-2" type="text" placeholder="@lang('messages.Search')" id="{{$filterKey}}" name="{{$filterKey}}" value="{{ $filters->get($filterKey) }}" autofocus>
+							@endif
+							@if ($filterKey == 'role_id_filter')
+								{{ Form::select($filterKey, $roles, $filters->get($filterKey), ['autofocus', 'placeholder' => 'Pick a role...', 'class' => 'form-control mr-sm-2'])}}
+							@endif
+						@endforeach
+						<button class="btn btn-primary" type="submit">@lang('messages.Search')</button>
+					</form>
 				</nav>
 			</div>
 			<div class="card-body">
@@ -20,15 +35,15 @@
 							<table class="table table-bordered table-hover">
 								<thead>
 								  <tr>
-									<th>Name</th>
-									<th>ID</th>
+									<th>@lang('messages.Name')</th>
+									<th>@lang('messages.Role')</th>
 								  </tr>
 								</thead>
 								<tbody>
 									@foreach ($list as $command)
 										<tr id="{{$entity}}_{{$command->id}}" class="@if ($command->trashed()) table-danger @endif" onclick="crudInstance.setCurrentRowId('{{$entity}}_{{$command->id}}');">
 											<td>{{ $command->name }}</td>
-											<td>{{ $command->id }}</td>
+											<td>{{ $command->role->name}}</td>
 										</tr>
 									@endforeach
 								</tbody>

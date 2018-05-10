@@ -39,10 +39,11 @@
 							@if (Gate::allows('module', 'security'))
 							<li class="nav-item active"><a class="nav-link" href="{{route('security')}}">Security</a></li>
 							@endif
-							<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
-							<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
-							<li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a></li>
-
+							@if (!is_null(Request::get('modulesMenuItem')))
+								@foreach(Request::get('modulesMenuItem') as $menuItem)
+									<li class="nav-item active"><a class="nav-link" href="{{$menuItem['url']}}">{{$menuItem['text']}}</a></li>
+								@endforeach
+							@endif
 						 </ul>
 					 @endguest
 				  </div>

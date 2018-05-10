@@ -56,5 +56,9 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->bind(
 			'App\Repositories\Contracts\MenuItemRepository', 'App\Repositories\Eloquent\EloquentMenuItemRepository'
 		);
+		
+		$this->app->bind(
+			'App\Repositories\Contracts\ModuleRepository', 'App\Repositories\Eloquent\EloquentModuleRepository'
+		);
     }
 }

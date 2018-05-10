@@ -39,4 +39,7 @@ return [
 	'Main' => 'Principal',
 	'Secondary' => 'Secundario',
 	'Custom' => 'Personlizado',
+	
+	'Module' => 'Módulo',
+	'Modules' => 'Módulos',
 ];

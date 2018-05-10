@@ -30,6 +30,9 @@
 					@if (Gate::allows('module', 'menuitems'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('menuitems.index')}}">@lang('messages.MenuItems')</a></li>
 					@endif
+					@if (Gate::allows('module', 'modules'))
+					<li class="nav-item active"><a class="nav-link" href="{{route('modules.index')}}">@lang('messages.Modules')</a></li>
+					@endif
 				 </ul>
 			  </div>
 			</ul>
