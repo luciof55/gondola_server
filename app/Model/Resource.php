@@ -37,6 +37,11 @@ class Resource extends Model
         return $this->hasMany('App\Model\RolePermission');
     }
 	
+	public function menuitems()
+    {
+        return $this->hasMany('App\Model\MenuItem');
+    }
+	
 	public function roles() {
 		return $this->belongsToMany('App\Model\Role', 'roles_permissions');
 	}
@@ -50,5 +55,9 @@ class Resource extends Model
 	}
 	public function isSoftDelete() {
 		return false;
+	}
+	
+	public function canDelete() {
+		return $this->menuitems->isEmpty();
 	}
 }

@@ -35,7 +35,7 @@ class RestoreRule implements Rule
     {
 		Log::info('Execute Restore Validataion: '. $value);
 		if (method_exists($this->repository, 'canRestore')) {
-			$result = $this->repository->canRestore($this->command, $this->message);
+			$result = $this->repository->canRestore($this->command);
 			$this->message = $result->get('message');
 			return $result->get('status');
 		} else {

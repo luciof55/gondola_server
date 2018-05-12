@@ -1,8 +1,3 @@
-@if(isset($status))
-	<div class="alert alert-success">
-		{{ $status }}
-	</div>
-@endif
 @if ($errors->any())
 	<div class="alert alert-danger">
 		<ul>
@@ -11,4 +6,15 @@
 			@endforeach
 		</ul>
 	</div>
+@else
+	@if(isset($status))
+		<div class="alert alert-success">
+			{{ $status }}
+		</div>
+	@endif
+	@if (session('statusError'))
+		<div class="alert alert-danger">
+			{{ session('statusError') }}
+		</div>
+	@endif
 @endif

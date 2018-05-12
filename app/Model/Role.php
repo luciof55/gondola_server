@@ -60,7 +60,7 @@ class Role extends Model
 	}
 	
 	public function modules() {
-		return $this->belongsToMany('App\Model\Module');
+		return $this->hasMany('App\Model\Module')->withTrashed();
 	}
 	
 	public function canDelete() {
@@ -76,5 +76,15 @@ class Role extends Model
 	}
 	public function isSoftDelete() {
 		return true;
+	}
+	
+	public function delete() {		
+		if ($this->modules->isNotEmpty()) {
+			foreach($this->modules as $module) {
+				$module->delete();
+			}
+		}
+		
+		parent::delete();
 	}
 }

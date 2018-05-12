@@ -8,11 +8,31 @@ use Illuminate\Support\Facades\Log;
 class EloquentBaseRepository extends AbstractRepository
 {
 	public function canDelete($command) {
+		$result = collect([]);
+		$result->put('message', null);
+		$result->put('status', true);
+		
 		if (method_exists($command, 'canDelete')) {
-			return $command->canDelete();
+			$result->put('status', $command->canDelete());	
 		} else {
-			return true;
+			$result->put('status', true);	
 		}
+		
+		return $result;
+	}
+	
+	public function canSoftDelete($command) {
+		$result = collect([]);
+		$result->put('message', null);
+		$result->put('status', true);
+		
+		if (method_exists($command, 'canSoftDelete')) {
+			$result->put('status', $command->canSoftDelete());	
+		} else {
+			$result->put('status', true);	
+		}
+		
+		return $result;
 	}
 	
 	public function canRestore($command) {
@@ -129,19 +149,20 @@ class EloquentBaseRepository extends AbstractRepository
 		if ($this->isSoftDelete()) {
 			$command = $this->find($id);
 			if ($command->trashed()) {
-				if ($this->canRestore($command)) {
+				$result = $this->canRestore($command);
+				if ($result['status']) {
 					$command->restore();
 					Log::info('Command Restore.');
 				}
 			} else {
 				$this->softDeleteCascade($command);
-				$command->delete();
 				Log::info('Command Deleted.');
 			}
 		}
 	}
 	
 	protected function softDeleteCascade($command) {
+		$command->delete();
 	}
 	
 	protected function addNestedFilters($query, $filterAttributes) {

@@ -17,16 +17,6 @@ class EloquentProfileRepository extends EloquentBaseRepository implements Profil
 	}
 	
 	protected function softDeleteCascade($profile) {
-		if ($profile->profilesroles->isNotEmpty()) {
-			foreach($profile->profilesroles as $profileRole) {
-				$profileRole->delete();
-			}
-		}
-		
-		if ($profile->users->isNotEmpty()) {
-			foreach($profile->users as $user) {
-				$user->delete();
-			}
-		}
+		$profile->delete();
 	}
 }

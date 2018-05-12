@@ -51,7 +51,8 @@ class Profile extends Model
 	}
 	
 	public function users() {
-		return $this->hasMany('App\User');
+		$user_class = config('app.user_class');
+		return $this->hasMany($user_class);
 	}
 	
 	public function canDelete() {
@@ -68,5 +69,15 @@ class Profile extends Model
 	
 	public function isSoftDelete() {
 		return true;
+	}
+	
+	public function delete() {
+		if ($this->users->isNotEmpty()) {
+			foreach($this->users as $user) {
+				$user->delete();
+			}
+		}
+		
+		parent::delete();
 	}
 }

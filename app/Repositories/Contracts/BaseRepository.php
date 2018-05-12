@@ -23,4 +23,6 @@ interface BaseRepository
 	 public function canDelete($command);
 	 
 	 public function canRestore($command);
+	 
+	 public function canSoftDelete($command);
 }

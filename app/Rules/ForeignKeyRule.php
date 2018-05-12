@@ -9,6 +9,7 @@ class ForeignKeyRule implements Rule
 {
     protected $repository;
 	protected $data;
+	protected $message;
 	/**
      * Create a new rule instance.
      *
@@ -33,7 +34,9 @@ class ForeignKeyRule implements Rule
 		Log::info('Execute ForeignKey Validataion: '. $value);
 		if (method_exists($this->repository, 'canDelete')) {
 			$command = $this->repository->find($value);
-			return $this->repository->canDelete($command);
+			$result = $this->repository->canDelete($command);
+			$this->message = $result->get('message');
+			return $result->get('status');
 		} else {
 			$command = $this->repository->find($value);
 			if (method_exists($this->repository->entity(), 'canDelete')) {
@@ -51,6 +54,9 @@ class ForeignKeyRule implements Rule
      */
     public function message()
     {
+		if (isset($this->message)) {
+			return $this->message;
+		}
         return 'Existen datos relacionados, no se puede eliminar.';
     }
 }

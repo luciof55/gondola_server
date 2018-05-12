@@ -17,6 +17,6 @@ class EloquentModuleRepository extends EloquentBaseRepository implements ModuleR
 	}
 	
 	protected function softDeleteCascade($module) {
-		
+		$module->delete();
 	}
 }

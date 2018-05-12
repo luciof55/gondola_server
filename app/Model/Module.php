@@ -40,11 +40,11 @@ class Module extends Model
     protected $filterAttributes = ['name', 'role_id'];
 	
 	public function submodules() {
-		return $this->hasMany('App\Model\Module', 'parent_id');
+		return $this->hasMany('App\Model\Module', 'parent_id')->withTrashed();
 	}
 	
 	public function role() {
-        return $this->belongsTo('App\Model\Role');
+        return $this->belongsTo('App\Model\Role')->withTrashed();
     }
 	
 	public function getOrderAttributes() {
@@ -64,5 +64,15 @@ class Module extends Model
 	
 	public function canDelete() {
 		return true;
+	}
+	
+	public function delete() {
+		if ($this->submodules->isNotEmpty()) {
+			foreach($this->submodules as $submodule) {
+				$submodule->delete();
+			}
+		}
+		
+		parent::delete();
 	}
 }

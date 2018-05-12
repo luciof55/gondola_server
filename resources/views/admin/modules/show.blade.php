@@ -25,6 +25,24 @@
 							<input id="role" type="text" class="form-control" name="role" value="{{ $command->role->name }}" readonly>
 						</div>
 					</div>
+					<div class="form-group row">
+						<div class="table-responsive">
+							<table class="table table-bordered table-hover">
+								<thead>
+								  <tr>
+									<th>@lang('messages.Modules')</th>
+								  </tr>
+								</thead>
+								<tbody>
+									@foreach ($command->submodules as $submodule)
+										<tr id="submodule_{{$submodule->id}}">
+											<td>{{ $submodule->name}}</td>
+										</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
+					</div>
 
 					<div class="form-group row mb-0">
 					   @include('admin.down_buttons', ['btn_save' => false])

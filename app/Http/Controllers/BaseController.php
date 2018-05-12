@@ -419,7 +419,7 @@ class BaseController extends Controller
 		Log::info('Execute '. $entity.' enable validator.');
         Log::info('ID: '.$data['id']);
 		$command = $this->repository->find($data['id']);
-		if ($command->trashed()) {
+		if ($this->repository->isSoftDelete() && $command->trashed()) {
 			return Validator::make($data, [
 				'id' => [new RestoreRule($this->repository, $data, $command),],
 			]);
