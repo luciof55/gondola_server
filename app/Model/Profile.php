@@ -2,13 +2,11 @@
 
 namespace App\Model;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Profile extends Model
 {
-    use Notifiable;
 	use SoftDeletes;
 
     /**

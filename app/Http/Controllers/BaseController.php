@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Rules\ForeignKeyRule;
 use App\Rules\RestoreRule;
+use App\Exports\TableExport;
+use \Maatwebsite\Excel\Excel;
 
 class BaseController extends Controller
 {	
@@ -125,7 +127,8 @@ class BaseController extends Controller
 			if (isset($validator)) {
 				$validator->validate();
 			}
-			$this->repository->create($request->all());
+			$command = $this->repository->create($request->all());
+			$this->fireCreateEvent($request, $command);
 			return $this->index($request, 'Successfully saved!');
 		} catch (Exception $e) {
 			$collectionStore->put('alertSuccess', 'ERROR');
@@ -223,6 +226,8 @@ class BaseController extends Controller
 			}
 			$id = $request->input('id');
 			$this->repository->update($id, $request->all());
+			$command = $this->repository->find($id);
+			$this->fireUpdateEvent($request, $command);
 			return $this->index($request, 'Successfully updated!');
 		} catch (Exception $e) {
 			$collectionUpdate->put('alertSuccess', 'ERROR');
@@ -274,9 +279,23 @@ class BaseController extends Controller
 		if (isset($validator)) {
 			$validator->validate();
 		}
+		$command = $this->repository->find($id);
 		$this->repository->forceDelete($id);
+		$this->fireDeleteEvent($request, $command);
 		return $this->index($request, 'Successfully deleted!');
     }
+	
+	public function export(\Illuminate\Http\Request $request, \Maatwebsite\Excel\Excel $excel) {
+		$orderAttributes = $this->repository->getInstance()->getOrderAttributes();
+		$filterAttributes = $this->repository->getInstance()->getFilterAttributes();
+		$collectionFilter = collect([]);
+		$collectionFilterAttributes = collect([]);
+		$this->processRequestFilters($request, $filterAttributes, $collectionFilter, $collectionFilterAttributes);
+		
+		$list = $this->repository->paginateWithTrashed(null, null, $orderAttributes, $collectionFilter, null);
+		$export = new TableExport($list);
+		return $excel->download($export, 'list.xlsx');
+	}
 	
 	public function getPageSize() {
 		return 5;
@@ -330,6 +349,15 @@ class BaseController extends Controller
 	
 	public function getIndexActionName() {
 		return $this->getControllerName().'@index';
+	}
+	
+	protected function fireUpdateEvent(\Illuminate\Http\Request $request, $command) {
+	}
+	
+	protected function fireCreateEvent(\Illuminate\Http\Request $request, $command) {
+	}
+	
+	protected function fireDeleteEvent(\Illuminate\Http\Request $request, $command) {
 	}
 	
 	protected function processRequestFilters($request, $filterAttributes, $collectionFilter, $collectionFilterAttributes) {

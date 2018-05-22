@@ -6,9 +6,11 @@
 	</div>
 	<div class="col-md-10">
 		<div class="card">
-			<div class="card-header"><nav class="navbar navbar-expand-sm  navbar-dark">NAVBAR</nav></div>
+			<div class="d-flex flex-column">
+				<div class="p-2 text-white bg-info border-bottom rounded-top">Security</div>
+			</div>
 			<div class="row">
-				<div class="container"></div>
+				<div class="container">@include('common_status')</div>
 			</div>
 		</div>
 	</div>

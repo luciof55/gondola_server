@@ -65,6 +65,7 @@ Route::get('modules/{id}', 'ModuleController@show')->middleware('checkprivilege:
 Route::get('modules/{id}/enable', 'ModuleController@enable')->middleware('checkprivilege:modules_enable')->name('modules.enable');
 Route::get('modules/{id}/delete', 'ModuleController@destroy')->middleware('checkprivilege:modules_remove')->name('modules.delete');
 
+Route::get('users/export', 'UserController@export')->middleware('checkprivilege:users')->name('users.export');
 Route::get('users', 'UserController@index')->middleware('checkprivilege:users')->name('users.index');
 Route::put('users/{id}', 'UserController@update')->middleware('checkprivilege:users_edit')->name('users.update');
 Route::get('users/{id}/edit', 'UserController@edit')->middleware('checkprivilege:users_edit')->name('users.edit');

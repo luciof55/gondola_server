@@ -22,7 +22,7 @@ function crud() {
 		$('#button_enable').removeClass('disabled');
 		$('#button_remove').removeClass('disabled');
 		
-		if ($('#' + id).hasClass('table-danger')) {
+		if ($('#' + id).hasClass('text-muted')) {
 			$('#button_enable').text('Habilitar');
 		} else {
 			$('#button_enable').text('Deshabilitar');
@@ -78,6 +78,13 @@ function crud() {
 	*/
 	this.executeAction = function() {
 		$("#actionForm").submit();
+	};
+	
+	/*
+	*Esta funcion asume que el formulario ya ha sido seteado.
+	*/
+	this.submitForm = function(formName) {
+		$("#" + formName).submit();
 	};
 	
 	$(document).on('show.bs.modal','#confirmation-modal', function (e) {

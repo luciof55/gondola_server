@@ -1,16 +1,11 @@
 @extends('layouts.app')
 @section('header')
-	<nav class="navbar navbar-expand-sm navbar-light bg-light">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSecurity" aria-controls="navbarSecurity" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-
-		<div class="collapse navbar-collapse" id="navbarSecurity">
-			<ul class="navbar-nav mr-auto">
-			  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbmenusec">
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+		<ul class="navbar-nav mr-auto">
+			<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbmenusec">
 				<span class="navbar-toggler-icon"></span>
-			  </button>
-			  <div class="collapse navbar-collapse" id="navbmenusec">
+			</button>
+			<div class="collapse navbar-collapse" id="navbmenusec">
 				<ul class="navbar-nav mr-auto">
 					@if (Gate::allows('module', 'users'))
 					<li class="nav-item active"><a class="nav-link" href="{{route('users.index')}}">@lang('messages.Users')</a></li>
@@ -35,15 +30,12 @@
 					@endif
 				 </ul>
 			  </div>
-			</ul>
-		</div>
+		</ul>
     </nav>
 @endsection
 @section('content')
 @yield('securityContent')
 @endsection
 @section('footer')
-<div class="row justify-content-center">
-	FOOTER
-</div>
+@include('footer')
 @endsection

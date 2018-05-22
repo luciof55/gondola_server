@@ -3,13 +3,10 @@
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use App\Enumeration\MenuType;
 
 class MenuItem extends Model
-{
-    use Notifiable;
-	
+{	
 	/**
      * The attributes that are mass assignable.
      *

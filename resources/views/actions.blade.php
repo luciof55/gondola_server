@@ -1,10 +1,12 @@
-<div class="card">
-	<div class="card-header"><nav class="navbar navbar-expand-sm navbar-dark">@lang('messages.Actions')</nav></div>
-	<div class="card-body">
-		<div class="content">
-			<ul class="nav flex-column nav-pills">
-			  <li class="nav-item">ITEM</li>
-			</ul>
+<div class="d-flex flex-column border rounded">
+	<div class="p-2 bg-info text-white">@lang('messages.Actions')</div>
+	@guest
+		<div class="p-2 bg-light border-bottom">
+			<a class="text-body" href="#">Opciones públicas</a>
 		</div>
-	</div>
+	@else
+		<div class="p-2 bg-light border-bottom">
+			<a class="text-body" href="#">ITEM 1</a>
+		</div>
+	@endguest
 </div>

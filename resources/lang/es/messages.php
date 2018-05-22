@@ -11,6 +11,7 @@ return [
 	'View' => 'Visualizar',
 	'Enable' => 'Habilitar',
 	'Actions' => 'Acciones',
+	'Export' => 'Exportar',
 	
 	'Name' => 'Nombre',
 	'selectrowtext' => 'Seleccione una fila',
