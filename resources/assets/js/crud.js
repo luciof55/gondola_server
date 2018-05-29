@@ -13,6 +13,10 @@ function crud() {
 				$('#button_edit').addClass('disabled');
 				$('#button_enable').addClass('disabled');
 				$('#button_remove').addClass('disabled');
+        $('#button_view_sm').addClass('disabled');
+				$('#button_edit_sm').addClass('disabled');
+				$('#button_enable_sm').addClass('disabled');
+				$('#button_remove_sm').addClass('disabled');
 				return;
 			};
 		};
@@ -21,13 +25,17 @@ function crud() {
 		$('#button_edit').removeClass('disabled');
 		$('#button_enable').removeClass('disabled');
 		$('#button_remove').removeClass('disabled');
-		
+    $('#button_view_sm').removeClass('disabled');
+		$('#button_edit_sm').removeClass('disabled');
+		$('#button_enable_sm').removeClass('disabled');
+		$('#button_remove_sm').removeClass('disabled');
+
 		if ($('#' + id).hasClass('text-muted')) {
 			$('#button_enable').text('Habilitar');
 		} else {
 			$('#button_enable').text('Deshabilitar');
 		}
-		
+
 		$('#' + id).addClass('table-active');
 	};
 
@@ -45,7 +53,7 @@ function crud() {
 		//alert(_values_id[variable_name]);
 		return _values_id[variable_name];
 	};
-	
+
 	this.create = function (action) {
 		//alert(action);
 		this.postForm(action, 'GET');
@@ -72,21 +80,21 @@ function crud() {
 			this.postForm(action, 'GET');
 		};
 	};
-	
+
 	/*
 	*Esta funcion asume que el formulario ya ha sido seteado.
 	*/
 	this.executeAction = function() {
 		$("#actionForm").submit();
 	};
-	
+
 	/*
 	*Esta funcion asume que el formulario ya ha sido seteado.
 	*/
 	this.submitForm = function(formName) {
 		$("#" + formName).submit();
 	};
-	
+
 	$(document).on('show.bs.modal','#confirmation-modal', function (e) {
 		entity = $(e.relatedTarget).data('entity');
 		var id = crudInstance.getEntityId(entity);
@@ -111,14 +119,14 @@ function crud() {
 			//alert('Set done: ' + $('#_method').val());
 		};
     });
-	
+
 	this.postFormPagination = function (page) {
 		//alert(page);
 		$('#page').val(page);
 		//alert('page ' + $('#page').val())
 		$("#actionForm").submit();
 	};
-	
+
 	this.postFormBack = function (form, action, method) {
 		$('#_method').val(method);
 		$('#'+form).attr('action', action);

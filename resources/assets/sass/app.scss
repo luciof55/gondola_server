@@ -1,6 +1,6 @@
 
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url("https://fonts.googleapis.com/css?family=Titillium+Web:300,400,600");
 @import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css");
 
 // Variables
@@ -12,4 +12,36 @@
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+.form-control {
+  border: 1px solid #607D8B;
+}
+
+.page-item.active .page-link {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.col-form-label {
+  @extend .d-none;
+  @extend .d-sm-block;
+}
+
+.table-header {
+  @extend .bg-info;
+  @extend .text-white;
+  @extend .text-center;
+}
+
+.main-content {
+  position: relative; top:110px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    position: relative; top:50px;
+  }
+}
+.pointer {
+  cursor: pointer;
 }

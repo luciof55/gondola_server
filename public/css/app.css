@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);/*!
+@import url(https://fonts.googleapis.com/css?family=Titillium+Web:300,400,600);@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);/*!
  * Bootstrap v4.1.0 (https://getbootstrap.com/)
  * Copyright 2011-2018 The Bootstrap Authors
  * Copyright 2011-2018 Twitter, Inc.
@@ -6884,14 +6884,19 @@ button.bg-success:focus {
   background-color: #1e7e34 !important;
 }
 
-.bg-info {
+.bg-info,
+.table-header {
   background-color: #17a2b8 !important;
 }
 
 a.bg-info:hover,
+a.table-header:hover,
 a.bg-info:focus,
+a.table-header:focus,
 button.bg-info:hover,
-button.bg-info:focus {
+button.table-header:hover,
+button.bg-info:focus,
+button.table-header:focus {
   background-color: #117a8b !important;
 }
 
@@ -7061,7 +7066,8 @@ button.bg-dark:focus {
   content: "";
 }
 
-.d-none {
+.d-none,
+.col-form-label {
   display: none !important;
 }
 
@@ -7114,7 +7120,8 @@ button.bg-dark:focus {
     display: inline-block !important;
   }
 
-  .d-sm-block {
+  .d-sm-block,
+  .col-form-label {
     display: block !important;
   }
 
@@ -10109,7 +10116,8 @@ button.bg-dark:focus {
   text-align: right !important;
 }
 
-.text-center {
+.text-center,
+.table-header {
   text-align: center !important;
 }
 
@@ -10197,7 +10205,8 @@ button.bg-dark:focus {
   font-style: italic !important;
 }
 
-.text-white {
+.text-white,
+.table-header {
   color: #fff !important;
 }
 
@@ -10392,5 +10401,30 @@ a.text-dark:focus {
   background-color: #fff;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.form-control {
+  border: 1px solid #607D8B;
+}
+
+.page-item.active .page-link {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.main-content {
+  position: relative;
+  top: 110px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    position: relative;
+    top: 50px;
+  }
+}
+
+.pointer {
+  cursor: pointer;
 }
 

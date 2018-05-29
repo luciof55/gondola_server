@@ -1,16 +1,7 @@
 @extends('layouts.app')
 @section('header')
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-	<ul class="navbar-nav mr-auto">
-		<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbmenuhome">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbmenuhome">
-			<ul class="navbar-nav mr-auto">
-			</ul>
-		</div>
-	</ul>
-</nav>
+<ul class="navbar-nav mr-auto">
+</ul>
 @endsection
 @section('content')
 <div class="row justify-content-center">

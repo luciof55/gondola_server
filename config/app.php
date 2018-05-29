@@ -164,6 +164,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 		Maatwebsite\Excel\ExcelServiceProvider::class,
+		App\Providers\RequestUtilsServiceProvider::class,
 
     ],
 
@@ -216,6 +217,7 @@ return [
 		'Form' => Collective\Html\FormFacade::class,
 		'Html' => Collective\Html\HtmlFacade::class,
 		'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+		'ReqUtils' => App\Facades\RequestUtils::class,
 
     ],
 

@@ -33,7 +33,9 @@ class BaseController extends Controller
 		$actionEnable = action($this->getIndexActionName()).'/|id|/enable/';
 		$actionDelete = action($this->getIndexActionName()).'/|id|/delete';
 		$actionView = action($this->getIndexActionName()).'/|id|';
-		$actionCreate = $this->getRouteResource().'.create';
+		$actionExport = action($this->getExportActionName());
+		$actionCreate = $this->getRouteGroup().$this->getRouteResource().'.create';
+		$collectionView->put('actionExport', $actionExport);
 		$collectionView->put('actionEdit', $actionEdit);
 		$collectionView->put('actionView', $actionView);
 		$collectionView->put('actionEnable', $actionEnable);
@@ -331,6 +333,10 @@ class BaseController extends Controller
 		return 'admin.';
 	}
 	
+	public function getRouteGroup() {
+		return 'security.';
+	}
+	
 	public function getEditActionName() {
 		return $this->getControllerName().'@edit';
 	}
@@ -349,6 +355,10 @@ class BaseController extends Controller
 	
 	public function getIndexActionName() {
 		return $this->getControllerName().'@index';
+	}
+	
+	public function getExportActionName() {
+		return $this->getControllerName().'@export';
 	}
 	
 	protected function fireUpdateEvent(\Illuminate\Http\Request $request, $command) {

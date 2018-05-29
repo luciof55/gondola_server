@@ -47423,6 +47423,10 @@ module.exports = Component.exports
 				$('#button_edit').addClass('disabled');
 				$('#button_enable').addClass('disabled');
 				$('#button_remove').addClass('disabled');
+				$('#button_view_sm').addClass('disabled');
+				$('#button_edit_sm').addClass('disabled');
+				$('#button_enable_sm').addClass('disabled');
+				$('#button_remove_sm').addClass('disabled');
 				return;
 			};
 		};
@@ -47431,6 +47435,10 @@ module.exports = Component.exports
 		$('#button_edit').removeClass('disabled');
 		$('#button_enable').removeClass('disabled');
 		$('#button_remove').removeClass('disabled');
+		$('#button_view_sm').removeClass('disabled');
+		$('#button_edit_sm').removeClass('disabled');
+		$('#button_enable_sm').removeClass('disabled');
+		$('#button_remove_sm').removeClass('disabled');
 
 		if ($('#' + id).hasClass('text-muted')) {
 			$('#button_enable').text('Habilitar');
