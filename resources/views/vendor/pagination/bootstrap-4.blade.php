@@ -4,7 +4,11 @@
         @if ($paginator->onFirstPage())
             <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
         @else
-            <li class="page-item"><a class="page-link" onclick="crudInstance.postFormPagination('{{ $paginator->currentPage() - 1 }}');" rel="prev">&lsaquo;</a></li>
+			@if (isset($paginationFunction))
+				<li class="page-item"><a class="page-link" onclick="{{$paginationFunction}}('{{ $paginator->currentPage() - 1 }}');" rel="prev">&lsaquo;</a></li>
+			@else
+				<li class="page-item"><a class="page-link" onclick="crudInstance.postFormPagination('{{ $paginator->currentPage() - 1 }}');" rel="prev">&lsaquo;</a></li>
+			@endif
         @endif
 
         {{-- Pagination Elements --}}
@@ -20,7 +24,11 @@
                     @if ($page == $paginator->currentPage())
                         <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
                     @else
-                        <li class="page-item"><a class="page-link" onclick="crudInstance.postFormPagination('{{ $page }}');">{{ $page }}</a></li>
+						@if (isset($paginationFunction))
+							<li class="page-item"><a class="page-link" onclick="{{$paginationFunction}}('{{ $page }}');">{{ $page }}</a></li>
+						@else
+							<li class="page-item"><a class="page-link" onclick="crudInstance.postFormPagination('{{ $page }}');">{{ $page }}</a></li>
+						@endif
                     @endif
                 @endforeach
             @endif
@@ -28,7 +36,11 @@
 
         {{-- Next Page Link --}}
         @if ($paginator->hasMorePages())
-            <li class="page-item"><a class="page-link" onclick="crudInstance.postFormPagination('{{ $paginator->currentPage() + 1 }}');" rel="next">&rsaquo;</a></li>
+			@if (isset($paginationFunction))
+				<li class="page-item"><a class="page-link" onclick="{{$paginationFunction}}('{{ $paginator->currentPage() + 1 }}');" rel="next">&rsaquo;</a></li>
+			@else
+				<li class="page-item"><a class="page-link" onclick="crudInstance.postFormPagination('{{ $paginator->currentPage() + 1 }}');" rel="next">&rsaquo;</a></li>
+			 @endif
         @else
             <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
         @endif

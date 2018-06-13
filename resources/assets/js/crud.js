@@ -95,6 +95,17 @@ function crud() {
 		$("#" + formName).submit();
 	};
 
+  this.validateAndSubmitForm = function(formName) {
+    if ($('#'+formName)[0].checkValidity() === false) {
+        $('#'+formName).addClass('was-validated');
+        return false;
+    } else {
+      $("#" + formName).submit();
+      return true;
+    }
+  };
+
+
 	$(document).on('show.bs.modal','#confirmation-modal', function (e) {
 		entity = $(e.relatedTarget).data('entity');
 		var id = crudInstance.getEntityId(entity);
@@ -132,6 +143,26 @@ function crud() {
 		$('#'+form).attr('action', action);
 		$('#'+form).submit();
 	};
+
+  this.ajaxSubmit = function (formName, url, method, options, callbackSuccess) {
+    // alert('formName: ' + formName);
+    // alert('url: ' + url);
+    // alert('method: ' + method);
+    $.ajaxSetup({header:$('meta[name="_token"]').attr('content')});
+
+    $.ajax({
+       type:method,
+       url:url,
+       data:$('#'+formName).serialize(),
+       dataType: 'json',
+       success: function(data){
+           callbackSuccess(data, options);
+       },
+       error: function(data){
+         alert('error: ' + data);
+       }
+     })
+   }
 };
 
 module.exports = crud;

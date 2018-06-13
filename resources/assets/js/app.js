@@ -16,7 +16,34 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+//Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+Vue.component('example-component', {
+  data: function () {
+    return {
+      count: 0
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+});
+
+Vue.component('delete-button-component', {
+	data: function () {
+		return {
+		  rows: []
+		}
+	},
+	methods: {
+		addRow: function(){
+			this.rows.push({});
+		},
+		removeRow: function(row){
+			//console.log(row);
+			this.rows.$remove(row);
+		}
+	},
+	template: '<button type="button" v-on:click="removeRow(row)" class="fa fa-remove delete-button"></button>'
+});
 
 const app = new Vue({
     el: '#app'

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
 use App\Rules\ForeignKeyRule;
 use App\Rules\RestoreRule;
@@ -33,9 +34,16 @@ class BaseController extends Controller
 		$actionEnable = action($this->getIndexActionName()).'/|id|/enable/';
 		$actionDelete = action($this->getIndexActionName()).'/|id|/delete';
 		$actionView = action($this->getIndexActionName()).'/|id|';
-		$actionExport = action($this->getExportActionName());
+		
+		if (Route::has($this->getRouteGroup().$this->getRouteResource().'.export')) {
+			$actionExport = action($this->getExportActionName());
+			$collectionView->put('actionExport', $actionExport);
+			$collectionView->put('actionExportEnable', true);
+		} else {
+			$collectionView->put('actionExportEnable', false);	
+		}
+		
 		$actionCreate = $this->getRouteGroup().$this->getRouteResource().'.create';
-		$collectionView->put('actionExport', $actionExport);
 		$collectionView->put('actionEdit', $actionEdit);
 		$collectionView->put('actionView', $actionView);
 		$collectionView->put('actionEnable', $actionEnable);
@@ -45,14 +53,25 @@ class BaseController extends Controller
 		$collectionView->put('entity', $entity);
 		$collectionFilterAttributes = collect([]);
 		$collectionFilter = collect([]);
+		$collectionOrderAttributes = collect([]);
+		$collectionOrder = collect([]);
 		$page = $request->input('page');
 		
+		
 		$orderAttributes = $this->repository->getInstance()->getOrderAttributes();
+		$this->processRequestOrder($request, $orderAttributes, $collectionOrder, $collectionOrderAttributes);
+		
+		$columnOrder = $request->input('columnOrder');
+		if (empty($columnOrder) && $collectionOrderAttributes->isNotEmpty()) {
+			$columnOrder = $collectionOrderAttributes->take(1);
+		}
+		
 		$filterAttributes = $this->repository->getInstance()->getFilterAttributes();
 		
 		$this->processRequestFilters($request, $filterAttributes, $collectionFilter, $collectionFilterAttributes);
 
 		$collectionView->put('filters', $collectionFilterAttributes);
+		$collectionView->put('orders', $collectionOrderAttributes);
 		
 		$totalItems = $this->repository->countWithTrashed($collectionFilter);
 		
@@ -63,11 +82,12 @@ class BaseController extends Controller
 			}
 		};
 		
-		$list = $this->repository->paginateWithTrashed(null, $this->getPageSize(), $orderAttributes, $collectionFilter, $page);
+		$list = $this->paginateWithTrashed($request, $collectionOrder, $collectionFilter, $page);
 		
 		$collectionView->put('actionCreate', $actionCreate);
 		$collectionView->put('list', $list);
 		$collectionView->put('page', $page);
+		$collectionView->put('columnOrder', $columnOrder);
 		$collectionView->put('method', 'GET');
 		$collectionView->put('action', action($this->getIndexActionName()));
 		$collectionView->put('status', $message);
@@ -87,6 +107,8 @@ class BaseController extends Controller
     public function create(\Illuminate\Http\Request $request)
     {
 		$collectionCreate = collect([]);
+		$collectionOrderAttributes = collect([]);
+		$collectionOrder = collect([]);
 		$entity = $this->repository->entity();
 		Log::info('Execute '. $entity.' create.');
         
@@ -97,10 +119,17 @@ class BaseController extends Controller
 		$page = $request->input('page');
 		$actionBack = action($this->getIndexActionName());
 		
+		$orderAttributes = $this->repository->getInstance()->getOrderAttributes();
+		$this->processRequestOrder($request, $orderAttributes, $collectionOrder, $collectionOrderAttributes);
+		
+		$columnOrder = $request->input('columnOrder');
+		if (empty($columnOrder) && $collectionOrderAttributes->isNotEmpty()) {
+			$columnOrder = $collectionOrderAttributes->take(1);
+		}
+		
 		$filterAttributes = $this->repository->getInstance()->getFilterAttributes();
 		$collectionFilterAttributes = collect([]);
 		$this->processRequestFilters($request, $filterAttributes, null, $collectionFilterAttributes);
-		
 		
 		$collectionCreate->put('command', $command);
 		$collectionCreate->put('actionBack', $actionBack);
@@ -108,6 +137,8 @@ class BaseController extends Controller
 		$collectionCreate->put('action', $action);
 		$collectionCreate->put('method', 'POST');
 		$collectionCreate->put('filters', $collectionFilterAttributes);
+		$collectionCreate->put('orders', $collectionOrderAttributes);
+		$collectionCreate->put('statusError', $request->session()->pull('statusError'));
 		
 		$this->referenceData($request, $collectionCreate);
 		
@@ -122,21 +153,21 @@ class BaseController extends Controller
      */
     public function store(\Illuminate\Http\Request $request)
     {	
-        try {
+        // try {
 			$entity = $this->repository->entity();
 			Log::info('Execute '. $entity.' store.');
-			$validator = $this->validator_create($request->all());
+			$validator = $this->validator_create($this->getValidateStoreData($request));
 			if (isset($validator)) {
 				$validator->validate();
 			}
-			$command = $this->repository->create($request->all());
+			$command = $this->storeCommand($request);
 			$this->fireCreateEvent($request, $command);
 			return $this->index($request, 'Successfully saved!');
-		} catch (Exception $e) {
-			$collectionStore->put('alertSuccess', 'ERROR');
-			$collectionStore->put('command', $this->getCommand($request));
-			return redirect()->action($this->getCreateActionName(), $collectionStore->all);
-		}
+		// } catch (\Exception $e) {
+			// Log::error($e);
+			// $request->session()->put('statusError', 'Se ha producido un error');
+			// return $this->create($request);
+		// }
     }
 
     /**
@@ -148,14 +179,29 @@ class BaseController extends Controller
     public function show(\Illuminate\Http\Request $request)
     {	
 		$collectionShow = collect([]);
+		$collectionCreate = collect([]);
+		$collectionOrderAttributes = collect([]);
 		$entity = $this->repository->entity();
 		Log::info('Execute '. $entity.' show.');
 		//Log::info('Execute Profile show. '. $request->url());
 		$id = substr($request->url(), strrpos($request->url(), '/') + 1);
-		Log::info('ID. '. $id);
-		$command = $this->repository->find($id);
+		//Log::info('ID. '. $id);
+		try {
+			$command = $this->repository->find($id);
+		} catch (\Exception $e) {
+			$request->session()->flash('statusError', 'Acceso no válido');
+			return view('error');
+		}
 		$action = action($this->getIndexActionName());
 		$page = $request->input('page');
+		
+		$orderAttributes = $this->repository->getInstance()->getOrderAttributes();
+		$this->processRequestOrder($request, $orderAttributes, null, $collectionOrderAttributes);
+		
+		$columnOrder = $request->input('columnOrder');
+		if (empty($columnOrder) && $collectionOrderAttributes->isNotEmpty()) {
+			$columnOrder = $collectionOrderAttributes->take(1);
+		}
 		
 		$filterAttributes = $this->repository->getInstance()->getFilterAttributes();
 		$collectionFilterAttributes = collect([]);
@@ -166,6 +212,7 @@ class BaseController extends Controller
 		$collectionShow->put('action', $action);
 		$collectionShow->put('method', 'POST');
 		$collectionShow->put('filters', $collectionFilterAttributes);
+		$collectionShow->put('orders', $collectionOrderAttributes);
 		
 		$this->referenceData($request, $collectionShow);
 		
@@ -181,18 +228,29 @@ class BaseController extends Controller
     public function edit(\Illuminate\Http\Request $request)
     {
 		$collectionEdit = collect([]);
+		$collectionCreate = collect([]);
+		$collectionOrderAttributes = collect([]);
+		$collectionOrder = collect([]);
 		$entity = $this->repository->entity();
 		Log::info('Execute '. $entity.' edit.');
 		//Log::info('Execute Profile edit.'. $request->url());
 		$url = substr($request->url(), 0, strrpos($request->url(), '/'));
-		Log::info('Strip URL: '. $url);
+		//Log::info('Strip URL: '. $url);
 		$id = substr($url, strrpos($url, '/') + 1);
-		Log::info('ID: '. $id);
-		$command = $this->repository->find($id);
+		//Log::info('ID: '. $id);
+		$command = $this->getCommand($request, $id);
 		$this->postEditProcessCommand($request, $command);
 		$action = action($this->getUpdateActionName(), $command);
 		$page = $request->input('page');
 		$actionBack = action($this->getIndexActionName());
+		
+		$orderAttributes = $this->repository->getInstance()->getOrderAttributes();
+		$this->processRequestOrder($request, $orderAttributes, $collectionOrder, $collectionOrderAttributes);
+		
+		$columnOrder = $request->input('columnOrder');
+		if (empty($columnOrder) && $collectionOrderAttributes->isNotEmpty()) {
+			$columnOrder = $collectionOrderAttributes->take(1);
+		}
 		
 		$filterAttributes = $this->repository->getInstance()->getFilterAttributes();
 		$collectionFilterAttributes = collect([]);
@@ -204,6 +262,8 @@ class BaseController extends Controller
 		$collectionEdit->put('action', $action);
 		$collectionEdit->put('method', 'PUT');
 		$collectionEdit->put('filters', $collectionFilterAttributes);
+		$collectionEdit->put('orders', $collectionOrderAttributes);
+		$collectionEdit->put('statusError', $request->session()->pull('statusError'));
 		
 		$this->referenceData($request, $collectionEdit);
 		
@@ -219,23 +279,22 @@ class BaseController extends Controller
      */
     public function update(\Illuminate\Http\Request $request)
     {	
-		try {
+		// try {
 			$entity = $this->repository->entity();
 			Log::info('Execute '. $entity.' update.');
-			$validator = $this->validator_update($request->all());
+			$validator = $this->validator_update($this->getValidateUpdateData($request));
 			if (isset($validator)) {
 				$validator->validate();
 			}
 			$id = $request->input('id');
-			$this->repository->update($id, $request->all());
-			$command = $this->repository->find($id);
+			$command = $this->updateCommand($request, $id);
 			$this->fireUpdateEvent($request, $command);
 			return $this->index($request, 'Successfully updated!');
-		} catch (Exception $e) {
-			$collectionUpdate->put('alertSuccess', 'ERROR');
-			$collectionUpdate->put('command', $this->getCommand($request));
-			return redirect()->action($this->getEditActionName(), $collectionUpdate->all());
-		}
+		// } catch (\Exception $e) {
+			// Log::error($e);
+			// $request->session()->put('statusError', 'Se ha producido un error');
+			// return $this->edit($request);
+		// }
     }
 	
 	/**
@@ -291,10 +350,16 @@ class BaseController extends Controller
 		$orderAttributes = $this->repository->getInstance()->getOrderAttributes();
 		$filterAttributes = $this->repository->getInstance()->getFilterAttributes();
 		$collectionFilter = collect([]);
+		$collectionOrder = collect([]);
+		$collectionFilterAttributes = collect([]);
+		$collectionOrderAttributes = collect([]);
+		
+		$this->processRequestOrder($request, $orderAttributes, $collectionOrder, $collectionOrderAttributes);
+		
 		$collectionFilterAttributes = collect([]);
 		$this->processRequestFilters($request, $filterAttributes, $collectionFilter, $collectionFilterAttributes);
 		
-		$list = $this->repository->paginateWithTrashed(null, null, $orderAttributes, $collectionFilter, null);
+		$list = $this->repository->paginateWithTrashed(null, null, $collectionOrder, $collectionFilter, null);
 		$export = new TableExport($list);
 		return $excel->download($export, 'list.xlsx');
 	}
@@ -385,9 +450,57 @@ class BaseController extends Controller
 		}
 	}
 	
+	protected function processRequestOrder($request, $orderAttributes, $collectionOrder, $collectionOrderAttributes) {
+		if (!empty($orderAttributes)) {
+			Log::info('Hay Orden');
+			if (!empty($request->input('columnOrder')) && !empty($request->input($request->input('columnOrder')))) {
+				if (isset ($collectionOrder) ) {
+					$aux = explode('_', $request->input('columnOrder'));
+					$collectionOrder->put($aux[0], 'asc');
+				}
+			}
+			
+			foreach ($orderAttributes as $attribute) {
+				if (!empty($request->input($attribute.'_order'))) {
+					Log::info('Hay Valor');
+					if (isset ($collectionOrder)) {
+						$collectionOrder->put($attribute, $request->input($attribute.'_order'));
+					}
+				} 
+				$collectionOrderAttributes->put($attribute.'_order', $request->input($attribute.'_order'));
+			}
+
+		}
+	}
+	
 	protected function getPages($pageSize, $totalItems) {
 		Log::info('getPages '. ceil($totalItems / $pageSize));
 		return ceil($totalItems / $pageSize);
+	}
+	
+	protected function getItemPage($pageSize, $items, $itemKey) {
+		$value = $items->get($itemKey);
+		if (isset($value)) {
+			// Log::info('+++++++++++++++++++');
+			// Log::info($value);
+			$position = $items->values()->search($value);
+			// Log::info('position '. $position);
+			// Log::info('+++++++++++++++++++');
+			return (intdiv($position, $pageSize) + 1);
+		} else {
+			return 0;
+		}
+		
+	}
+	
+	protected function getItemsPages($items, $pageSize, $page) {
+		if ($items->isNotEmpty()) {
+			$chunks = $items->chunk($pageSize);
+			$slice = $chunks[$page];
+			return $slice;
+		} else {
+			return collect([]);
+		}
 	}
 	
 	/**
@@ -395,8 +508,34 @@ class BaseController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      */
-	protected function getCommand(\Illuminate\Http\Request $request) {
-		return $this->repository->getInstance();
+	protected function getCommand(\Illuminate\Http\Request $request, $id = null) {
+		if (!blank($this->getCommandKey()) && $request->session()->has($this->getCommandKey())) {
+			$command = $request->session()->get($this->getCommandKey(), null);
+			if (isset($command)) {
+				// Log::info('Command-----------');
+				// Log::info($command);
+				// Log::info('-----------Command');
+				return $command;
+			}
+		} 
+		if (is_null($id)) {
+			return $this->repository->getInstance();
+		} else {
+			return $this->repository->find($id);
+		}
+	}
+	
+	protected function storeCommand(\Illuminate\Http\Request $request) {
+		return $this->repository->create($request->all());
+	}
+	
+	protected function updateCommand(\Illuminate\Http\Request $request, $id) {
+		$this->repository->update($id, $request->all());
+		return $this->repository->find($id);
+	}
+	
+	protected function getCommandKey() {
+		return '';
 	}
 	
 	/**
@@ -409,15 +548,38 @@ class BaseController extends Controller
 		//
 	}
 	
+	protected function paginateWithTrashed(\Illuminate\Http\Request $request, $collectionOrder, $collectionFilter, $page) {
+		return $this->repository->paginateWithTrashed(null, $this->getPageSize(), $collectionOrder, $collectionFilter, $page);
+	}
+	
+	/**
+	* Replace spaces with "-" and remove special chars
+	*
+	* @param $string: string to clean
+	* @return: string clean and to lower case
+	*
+	*/
+	protected function clean($string) {
+		$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+		$string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+		return strtolower($string); //return to lower
+	}
+	
+	protected function getValidateStoreData(\Illuminate\Http\Request $request) {
+		return $request->all();
+	}
+	
 	/**
      * Get a validator for an incoming Account request.
      *
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator_create(array $data)
-    {
-    }
+    protected function validator_create(array $data){}
+	
+	protected function getValidateUpdateData(\Illuminate\Http\Request $request) {
+		return $request->all();
+	}
 	
 	/**
      * Get a validator for an incoming account request.
@@ -425,9 +587,7 @@ class BaseController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator_update(array $data)
-    {
-    }
+    protected function validator_update(array $data){}
 	
 	/**
      * Get a validator for an incoming user request.

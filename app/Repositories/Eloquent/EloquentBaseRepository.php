@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use Kurt\Repoist\Repositories\Eloquent\AbstractRepository;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EloquentBaseRepository extends AbstractRepository
 {
@@ -173,30 +174,48 @@ class EloquentBaseRepository extends AbstractRepository
      */
     protected function getWithTrashed($query, $paginate = null, $orderAttributes = null, $filterAttributes = null, $page = null)
     {
+		$query->select($this->getInstance()->getTable().'.*');
+		
 		if (isset($filterAttributes) && $filterAttributes->isNotEmpty()) {
 			Log::info('Hay Filtros-Valor');
 			foreach ($filterAttributes->keys() as $attributeKey) {
-				//if ($attributeKey.substr('.', 0) == -1) {
+				if (!str_contains($attributeKey, '.')) {
 					Log::info('Key: '.$attributeKey);
 					$value = $filterAttributes->get($attributeKey);
 					Log::info('value: '.$value);
 					if(is_numeric($value)) {
 						Log::info('Adding NUMBER-------------------------- ');
-						$query->where($attributeKey, $value);
+						$query->where($this->getInstance()->getTable().'.'.$attributeKey, $value);
 					} else {
-						$query->where($attributeKey, 'like', '%'.$value.'%');
+						$query->where($this->getInstance()->getTable().'.'.$attributeKey, 'like', '%'.$value.'%');
 					}
-				//}
+				}
 			}
 			$this->addNestedFilters($query, $filterAttributes);
 		};
 		
-		if (!empty($orderAttributes)) {
-			foreach ($orderAttributes as $attribute) {
-				$query->orderBy($attribute);
+		if (!empty($orderAttributes)&& $orderAttributes->isNotEmpty()) {
+			foreach ($orderAttributes->keys() as $attributeKey) {
+				$order = $orderAttributes->get($attributeKey);
+				if (str_contains($attributeKey, '-')) {
+					$aux = explode('-', $attributeKey);
+					$relation = $this->getRelation($aux[0]);
+					if (isset($relation)) {
+						$query->join($relation->getRelated()->getTable(), $relation->getQualifiedForeignKey(), '=', $relation->getRelated()->getQualifiedKeyName());
+						$query->orderBy($relation->getRelated()->getTable().'.'.$aux[1], $order);
+					}
+				} else {
+					$query->orderBy($this->getInstance()->getTable().'.'.$attributeKey, $order);
+				}
 			}
 		};
-			
+		
+		//Log::info('***************SQL: '.$query->toSql());
+		
 		return $paginate ? $query->paginate($paginate, null, null, $page) : $query->get();
+	}
+	
+	public function getRelation($relationName) {
+		return $this->getInstance()->$relationName();
 	}
 }

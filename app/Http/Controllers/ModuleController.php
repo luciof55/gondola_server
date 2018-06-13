@@ -211,12 +211,6 @@ class ModuleController extends BaseController
 		return $role;
 	}
 	
-	protected function clean($string) {
-		$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
-		$string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
-		return strtolower($string); //return to lower
-	}
-	
 	 /**
      * Create a new controller instance.
      *

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static boolean isCurrentMenu(string $menuUrl, string $menuKey)
- *
+ * @method static boolean routeController(string $entity, string $controller, string $model, array $middlewares)
  */
 class RequestUtils extends Facade
 {

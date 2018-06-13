@@ -38,7 +38,7 @@ class CheckPrivilege
 				if ($resourceKey == 'moduleName' || $resourceKey == 'subModuleName') {
 					try {
 						$moduleKey = $request->route($resourceKey);
-						//Log::debug('CheckPrivilege - Handle - moduleKey: '.$moduleKey);
+						//Log::info('CheckPrivilege - Handle - moduleKey: '.$moduleKey);
 						$modules = $this->moduleRepository->findWhere('key', $moduleKey);
 						if ($modules->isEmpty()) {
 							return redirect('/')->with('unauthorized', "This action is unauthorized or module doesn't exist!");
@@ -46,7 +46,7 @@ class CheckPrivilege
 							$user = $request->user();
 							$module = $modules[0];
 							foreach ($user->profile->profilesroles as $profileRole) {
-								//Log::debug('ModuleMenuItem Role: '. $profileRole->role_id);
+								//Log::info('ModuleMenuItem Role: '. $profileRole->role_id);
 								if ($profileRole->role_id == $module->role->id) {
 									return $next($request);
 								}

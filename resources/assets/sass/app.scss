@@ -30,7 +30,7 @@
 .table-header {
   @extend .bg-info;
   @extend .text-white;
-  @extend .text-center;
+  @extend .text-left;
 }
 
 .main-content {
@@ -44,4 +44,31 @@
 }
 .pointer {
   cursor: pointer;
+}
+
+.dropdown-toggle-down::after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.455em;
+  font-family: FontAwesome;
+  content: "\f077";
+}
+
+.dropdown-toggle-up::after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.455em;
+  font-family: FontAwesome;
+    content: "\f078";
+}
+
+.dropdown-toggle-none::after {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.455em;
+  font-family: FontAwesome;
+    content: "\f146";
 }

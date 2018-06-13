@@ -25,4 +25,6 @@ interface BaseRepository
 	 public function canRestore($command);
 	 
 	 public function canSoftDelete($command);
+	 
+	 public function getRelation($relationName);
 }
