@@ -42,7 +42,9 @@
 					<div class="container">
 						<div class="d-flex flex-fill flex-row">
 							<div class="p-1">{{ $list->links() }}</div>
-							<div class="d-none d-md-block p-1"><button id="button_export" type="button" onclick="location.href='{{route('users.export')}}';" class="btn btn-primary btn-md"><i class="pr-2 fa fa-th-list"></i>@lang('messages.Export')</button></div>
+							@if($actionExportEnable)
+								<div class="d-none d-md-block p-1"><button id="button_export" type="button" onclick="location.href='{{$actionExport}}';" class="btn btn-primary btn-md"><i class="pr-2 fa fa-th-list"></i>@lang('messages.Export')</button></div>
+							@endif
 							<div class="p-0 ml-auto">
 								@include('admin.buttons', ['btn_new' => true, 'btn_view' => true, 'btn_edit' => true, 'btn_enable' => true, 'btn_remove' => true])
 							</div>

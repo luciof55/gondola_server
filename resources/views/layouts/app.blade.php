@@ -8,12 +8,12 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'UpSales') }}</title>
+    <title>{{ config('app.name', 'Góndola Server') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <!-- Styles -->
-    <link href="{{ asset('public/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body class="mh-100">
     <div id="app">
@@ -26,7 +26,7 @@
             <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbmenu">
               <span class="navbar-toggler-icon"></span>
             </button>
-  					<a class="d-none d-md-block navbar-brand" href="{{ route('home')}}"><img src="{{ asset('public/img/logo.jpg')}}" alt="Logo"></a>
+  					<a class="d-none d-md-block navbar-brand" href="{{ route('home')}}"><img src="{{ asset('img/logo.jpg')}}" alt="Logo"></a>
             <ul class="navbar-nav w-100">
               <div class="collapse navbar-collapse w-100" id="navbmenu">
                 <div class="float-left w-50">
@@ -48,7 +48,6 @@
 
     </div>
 	<!-- Scripts -->
-	<script src="https://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
-    <script src="{{ asset('public/js/app.js') }}" defer></script>
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 </html>

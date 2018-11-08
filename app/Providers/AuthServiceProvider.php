@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +27,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+		
+		Passport::routes();
 		
 		Gate::define('enable', 'App\Policies\SecurityPolicy@enable');
 		Gate::define('remove', 'App\Policies\SecurityPolicy@remove');

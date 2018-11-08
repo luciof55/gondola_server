@@ -2,6 +2,8 @@
 
 return [
 
+	'user_class' => 'App\GondolaUser',
+
 	'default_public_profile' => env('DEFAULT_PUBLIC_PROFILE', '2'),
 
     /*
@@ -15,7 +17,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Góndola Server'),
 
     /*
     |--------------------------------------------------------------------------
@@ -162,6 +164,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+		App\Providers\RouteGondolaServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 		Maatwebsite\Excel\ExcelServiceProvider::class,
 		App\Providers\RequestUtilsServiceProvider::class,
