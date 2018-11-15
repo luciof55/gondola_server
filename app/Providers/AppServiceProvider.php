@@ -60,5 +60,13 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->bind(
 			'App\Repositories\Contracts\ModuleRepository', 'App\Repositories\Eloquent\EloquentModuleRepository'
 		);
+		
+		$this->app->bind(
+			'App\Repositories\Contracts\LicenceRepository', 'App\Repositories\Eloquent\EloquentLicenceRepository'
+		);
+		
+		$this->app->bind(
+			'App\Services\LicenceServiceInterface', 'App\Services\LicenceService'
+		);
     }
 }

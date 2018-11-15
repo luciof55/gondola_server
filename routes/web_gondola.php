@@ -14,4 +14,6 @@ Route::get('/tokens', function () {
     return view('tokens');
 });
 
-Route::get('/getToken', 'TokenController@getToken')->name('getToken');
+Route::get('/getToken', 'TokenController@getToken')->middleware('auth:api')->name('getToken');
+
+Route::get('/oauth/authorize', 'AuthorizeTokenController@authorize')->middleware('auth')->name('passport.authorizations.authorize');
