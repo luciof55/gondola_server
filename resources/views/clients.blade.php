@@ -10,7 +10,7 @@
 	</div>
 	<div class="col-md-10">
 		<div class="container">
-			<passport-authorized-clients></passport-authorized-clients>
+			<passport-clients></passport-clients>
 		</div>
 	</div>
 </div>

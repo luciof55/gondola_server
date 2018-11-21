@@ -1,5 +1,5 @@
 <ul class="navbar-nav">
-  <a class="navbar-brand d-none d-md-block">UpSales</a>
+  <a class="navbar-brand d-none d-md-block">Góndola Server</a>
   @guest
   @else
     @if (Gate::allows('module', 'security'))

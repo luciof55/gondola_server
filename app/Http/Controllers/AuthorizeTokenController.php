@@ -57,7 +57,6 @@ class AuthorizeTokenController extends AuthorizationController
 				Log::info($psrRequest->getServerParams());
 			
 				return parent::authorize($psrRequest, $request, $clients, $tokens);
-			
 				
 			} else {
 				$redirect_licence_error = $this->getRequestParameter('redirect_licence_error', $psrRequest, null);

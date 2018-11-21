@@ -7,7 +7,7 @@
 	<div class="col-md-10">
 		<div class="card">
 			<div class="d-flex flex-column">
-				<div class="p-2 text-white bg-info border-bottom rounded-top">Security</div>
+				<div class="p-2 text-white bg-primary border-bottom rounded-top">Security</div>
 			</div>
 			<div class="card-body">
 				<div class="row">

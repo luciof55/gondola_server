@@ -55,13 +55,14 @@ class EnrichTokenController extends AccessTokenController
 				$response = parent::issueToken($request);
 			
 				if ($response->getStatusCode() == 200) {
-					//Access token generated, updated it!
+					//Access token generated, update it!
 					Log::info($response->getContent());
 					$token = $this->getToken($request);
 					if ($token) {
 						$ip = $request->getServerParams()['REMOTE_ADDR'];
 						$client_licence = $this->getRequestParameter('client_licence', $request, null);
 						Log::info('issueToken client_licence: '.$client_licence);
+						Log::info('issueToken hostname: '. $this->getRequestParameter('hostname', $request, null));
 						$this->licenceService->updateLicence($token, $ip, $client_licence);
 					}
 				}
@@ -74,7 +75,7 @@ class EnrichTokenController extends AccessTokenController
 			}
 		
 		} else {
-			$result = json_encode(['message' => 'ERROR - Cliente no validoa']);
+			$result = json_encode(['message' => 'ERROR - Cliente no valido']);
 			return response()->json($result, 200);
 		}
     }

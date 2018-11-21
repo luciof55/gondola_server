@@ -15,7 +15,7 @@ class Licence extends Model
      * @var array
      */
     protected $fillable = [
-        'licence', 'id', 'client_id', 'token_id', 'ip'
+        'licence', 'id', 'client_id', 'token_id', 'ip', 'hostid', 'licence_amount',
     ];
 	
 	/**

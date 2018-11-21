@@ -7,7 +7,15 @@ interface LicenceServiceInterface
 	
 	public function getToken($client_id, $client_secret, $client_user);
 	
+	public function all();
+	
+	public function createLicence($client_id, $client_licence, $amount);
+	
 	public function updateLicence($token, $ip, $client_license);
+	
+	public function deleteLicence($licenceId);
+	
+	public function releaseLicence($token);
 	
 	public function validateLicence($ip, $client_licence);
 	

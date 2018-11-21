@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use App\Repositories\Contracts\LicenceRepository;
 use Laravel\Passport\ClientRepository;
 use Carbon\Carbon;
+use Exception;
 
 class LicenceService implements LicenceServiceInterface
 {
@@ -54,22 +55,156 @@ class LicenceService implements LicenceServiceInterface
 		}
 	}
 	
+	public function all() {
+		return $this->licenceRepository->paginateWithTrashed();
+	}
+	
+	public function createLicence($client_id, $client_licence, $amount) {
+		Log::info('LicenceService - createLicence START');
+		
+		if (isset($client_id) && isset($amount) && isset($client_licence)) {
+			try {
+				$licence = $this->licenceRepository->create(['client_id' => $client_id, 'licence' => $client_licence, 'licence_amount' => $amount]);
+			
+				if ($licence->save()) {
+					Log::info('createLicence client licence created: '.$client_licence);
+					return $licence;	
+				} else {
+					Log::error('createLicence -  Error while saving');
+					return null;
+				}
+			} catch (Exception $e) {
+				Log::error($e);
+				return null;
+			}
+		} else {
+			Log::info('createLicence -  missing parameters');
+			return null;
+		}
+	}
+	
 	public function updateLicence($token, $ip, $client_licence) {
 		Log::info('LicenceService - updateLicence START');
 		
 		if (isset($token) && isset($ip) && isset($client_licence)) {
-			
-			$licence = $this->licenceRepository->findWhereFirst('licence', $client_licence);
-			if ($licence) {
-				$licence->ip = $ip;
-				$licence->token_id = $token->id;
-				$licence->save();
-				Log::info('updateLicence client licence updated: '.$client_licence);
-				return true;
-			} else {
+			try {
+				$licence = $this->licenceRepository->findWhereFirst('licence', $client_licence);
+				if ($licence) {
+					$licence->ip = $ip;
+					$licence->token_id = $token->id;
+					$licence->save();
+					Log::info('updateLicence client licence updated: '.$client_licence);
+					return true;
+				} else {
+					Log::info('updateLicence client licence not found: '.$client_licence);
+					return false;
+				}
+			} catch (Exception $e) {
+				Log::error($e);
 				return false;
 			}
 		} else {
+			Log::info('createLicence -  missing parameters');
+			return false;
+		}
+	}
+	
+	public function deleteLicence($licenceId) {
+		Log::info('LicenceService - deleteLicence START');
+		
+		if (isset($licenceId)) {
+			try {
+				$licence = $this->licenceRepository->find($licenceId);
+				if ($licence) {
+					if ($licence->token) {
+						$this->releaseLicence($licence->token->id);
+					}
+					
+					if ($this->licenceRepository->delete($licenceId)) {
+						Log::info('deleteLicence client licence removed');
+						return true;
+					} else {
+						Log::info('deleteLicence error while removing');
+					return false;
+					}
+				} else {
+					Log::info('deleteLicence client licence not found');
+					return false;
+				}
+			} catch (Exception $e) {
+				Log::error($e);
+				return false;
+			}
+		} else {
+			Log::info('deleteLicence -  missing parameters');
+			return false;
+		}
+	}
+	
+	public function enableLicence($licenceId) {
+		Log::info('LicenceService - enableLicence START');
+		
+		if (isset($licenceId)) {
+			try {
+				$licence = $this->licenceRepository->findWithTrashed($licenceId);
+				if ($licence) {
+					if ($licence->restore()) {
+						Log::info('enableLicence client licence restored');
+						return true;
+					} else {
+						Log::info('enableLicence error while restoring');
+					return false;
+					}
+				} else {
+					Log::info('enableLicence client licence not found');
+					return false;
+				}
+			} catch (Exception $e) {
+				Log::error($e);
+				return false;
+			}
+		} else {
+			Log::info('enableLicence -  missing parameters');
+			return false;
+		}
+	}
+	
+	public function releaseLicence($tokenId) {
+		Log::info('LicenceService - realseLicence START');
+		
+		if (isset($tokenId)) {
+			try {
+				$licence = $this->licenceRepository->findWhereFirst('token_id', $tokenId);
+				if ($licence) {
+					$licence->ip = null;
+					$licence->token_id = null;
+					$licence->hostid = null;
+					if ($licence->save()) {
+						Log::info('realseLicence client licence updated: '.$licence->licence);
+						$token = $this->tokenRepository->find($tokenId);
+
+						if (is_null($token)) {
+							Log::info('releaseLicence token not found'. $tokenId);
+							return false;
+						}
+
+						$token->revoke();
+						return true;
+					} else {
+						Log::info('realseLicence client licence updated: '.$licence->licence);
+						return false;
+					}
+					
+				} else {
+					Log::info('releaseLicence client licence not found');
+					return false;
+				}
+			} catch (Exception $e) {
+				Log::error($e);
+				return false;
+			}
+		} else {
+			Log::info('releaseLicence -  missing parameters');
 			return false;
 		}
 	}
@@ -78,26 +213,27 @@ class LicenceService implements LicenceServiceInterface
 		Log::info('LicenceService - validateLicence START');
 		
 		if (isset($ip) && isset($client_licence)) {
+			try {
+				$licence = $this->licenceRepository->findWhereFirst('licence', $client_licence);
 			
-			$licence = $this->licenceRepository->findWhereFirst('licence', $client_licence);
-			
-			if ($licence) {
-				if (!isset($licence->ip) && !isset($licence->token)) {
-					return true;
-				} else {
-					Log::info('validateLicence from: '.$ip);
-					if ($ip == $licence->ip) {
+				if ($licence) {
+					if (!isset($licence->ip) && !isset($licence->token)) {
 						return true;
 					} else {
-						Log::info('validateLicence not valid IP: '.$ip.' expected: '.$licence->ip);
-						//IP is difernet...
+						Log::info('releaseLicence client licence already used');
 						return false;
 					}
+				} else {
+					Log::info('releaseLicence client licence not found');
+					return false;
 				}
-			} else {
+			} catch (Exception $e) {
+				Log::error($e);
 				return false;
 			}
+			
 		} else {
+			Log::info('releaseLicence -  missing parameters');
 			return false;
 		}
 	}
