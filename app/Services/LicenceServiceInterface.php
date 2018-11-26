@@ -11,7 +11,7 @@ interface LicenceServiceInterface
 	
 	public function createLicence($client_id, $client_licence, $amount);
 	
-	public function updateLicence($token, $ip, $client_license);
+	public function updateLicence($token, $ip, $hostname, $client_licence);
 	
 	public function deleteLicence($licenceId);
 	
@@ -19,7 +19,7 @@ interface LicenceServiceInterface
 	
 	public function validateLicence($ip, $client_licence);
 	
-	public function validateLicenceWithToken($ip, $client_licence, $token);
+	public function validateLicenceWithToken($ip, $remoteIp, $client_licence, $token);
 	
 	public function validateClient($client_id, $client_secret);
 	

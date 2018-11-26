@@ -23,6 +23,7 @@ class CreateLicenceTable extends Migration
 			$table->string('ip', 100)->nullable();
 			$table->string('hostid', 100)->nullable();
 			$table->unsignedInteger('licence_amount');
+			$table->longText('remoteips')->nullable();
 			$table->softDeletes();
             $table->timestamps();
         });

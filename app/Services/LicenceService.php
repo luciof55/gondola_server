@@ -83,7 +83,7 @@ class LicenceService implements LicenceServiceInterface
 		}
 	}
 	
-	public function updateLicence($token, $ip, $client_licence) {
+	public function updateLicence($token, $ip, $hostname, $client_licence) {
 		Log::info('LicenceService - updateLicence START');
 		
 		if (isset($token) && isset($ip) && isset($client_licence)) {
@@ -92,6 +92,7 @@ class LicenceService implements LicenceServiceInterface
 				if ($licence) {
 					$licence->ip = $ip;
 					$licence->token_id = $token->id;
+					$licence->hostid = $hostname;
 					$licence->save();
 					Log::info('updateLicence client licence updated: '.$client_licence);
 					return true;
@@ -104,7 +105,7 @@ class LicenceService implements LicenceServiceInterface
 				return false;
 			}
 		} else {
-			Log::info('createLicence -  missing parameters');
+			Log::info('updateLicence -  missing parameters');
 			return false;
 		}
 	}
@@ -170,7 +171,7 @@ class LicenceService implements LicenceServiceInterface
 	}
 	
 	public function releaseLicence($tokenId) {
-		Log::info('LicenceService - realseLicence START');
+		Log::info('LicenceService - releaseLicence START');
 		
 		if (isset($tokenId)) {
 			try {
@@ -179,8 +180,9 @@ class LicenceService implements LicenceServiceInterface
 					$licence->ip = null;
 					$licence->token_id = null;
 					$licence->hostid = null;
+					$licence->remoteips = null;
 					if ($licence->save()) {
-						Log::info('realseLicence client licence updated: '.$licence->licence);
+						Log::info('releaseLicence client licence updated: '.$licence->licence);
 						$token = $this->tokenRepository->find($tokenId);
 
 						if (is_null($token)) {
@@ -191,7 +193,7 @@ class LicenceService implements LicenceServiceInterface
 						$token->revoke();
 						return true;
 					} else {
-						Log::info('realseLicence client licence updated: '.$licence->licence);
+						Log::info('releaseLicence client licence updated: '.$licence->licence);
 						return false;
 					}
 					
@@ -220,11 +222,11 @@ class LicenceService implements LicenceServiceInterface
 					if (!isset($licence->ip) && !isset($licence->token)) {
 						return true;
 					} else {
-						Log::info('releaseLicence client licence already used');
+						Log::info('validateLicence client licence already used');
 						return false;
 					}
 				} else {
-					Log::info('releaseLicence client licence not found');
+					Log::info('validateLicence client licence not found');
 					return false;
 				}
 			} catch (Exception $e) {
@@ -233,12 +235,12 @@ class LicenceService implements LicenceServiceInterface
 			}
 			
 		} else {
-			Log::info('releaseLicence -  missing parameters');
+			Log::info('validateLicence -  missing parameters');
 			return false;
 		}
 	}
 	
-	public function validateLicenceWithToken($ip, $client_licence, $token) {
+	public function validateLicenceWithToken($ip, $remoteIp, $client_licence, $token) {
 		Log::info('LicenceService - validateLicenceWithToken START');
 		
 		if (isset($token) && isset($ip) && isset($client_licence)) {
@@ -251,7 +253,58 @@ class LicenceService implements LicenceServiceInterface
 					return false;
 				} else {
 					if ($ip == $licence->ip && $token->id == $licence->token->id) {
-						return true;
+						if ($ip != $remoteIp) {
+							//Validate remote IP and amount of licences
+							if ($licence->licence_amount > 1) {
+								if (is_null($licence->remoteips)) {
+									$newRemoteIp = array('ip' => $remoteIp, 'time' => time());
+									$remoteips = array();
+									$replacedIp = str_replace_array('.', ['', '', '', ''], $remoteIp);
+									$remoteips = array_add($remoteips, $replacedIp, $newRemoteIp);
+									Log::info($remoteips);
+									$licence->remoteips = json_encode($remoteips);
+									try {
+										$licence->save();
+										Log::info('validateLicenceWithToken Adding IP: '.$remoteIp);
+										return true;
+									} catch (Exception $e) {
+										Log::error($e);
+										return false;
+									}
+								} else {
+									$replacedIp = str_replace_array('.', ['', '', '', ''], $remoteIp);
+									$remoteips = json_decode($licence->remoteips, true);
+									if (!array_has($remoteips, $replacedIp)) {
+										$currentUsedLicences = count($remoteips);
+										//Se resta la licencia de la instalación de la góndola
+										if (($licence->licence_amount - 1) > $currentUsedLicences) {
+											$newRemoteIp = array('ip' => $remoteIp, 'time' => time());
+											$remoteips = array_add($remoteips, $replacedIp, $newRemoteIp);
+											$licence->remoteips = json_encode($remoteips);
+											try {
+												$licence->save();
+												Log::info('validateLicenceWithToken Adding IP: '.$remoteIp);
+												return true;
+											} catch (Exception $e) {
+												Log::error($e);
+												return false;
+											}
+										} else {
+											Log::info('validateLicenceWithToken not enough licences, current used: '.$currentUsedLicences);
+											return false;
+										}
+									} else {
+										Log::info('validateLicenceWithToken IP already authorized: '.$remoteIp);
+										return true;
+									}
+								}
+							} else  {
+								Log::info('validateLicenceWithToken not enough licences, only one licence allowed');
+								return false;
+							}
+						} else {
+							return true;
+						}
 					} else {
 						Log::info('validateLicenceWithToken recived IP: '.$ip.' expected: '.$licence->ip);
 						Log::info('validateLicenceWithToken recived token: '.$token->id.' expected: '.$licence->token->id);
@@ -260,9 +313,11 @@ class LicenceService implements LicenceServiceInterface
 					}
 				}
 			} else {
+				Log::info('validateLicenceWithToken client licence not found');
 				return false;
 			}
 		} else {
+			Log::info('validateLicenceWithToken -  missing parameters');
 			return false;
 		}
 	}

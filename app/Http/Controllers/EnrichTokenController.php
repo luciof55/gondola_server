@@ -63,7 +63,8 @@ class EnrichTokenController extends AccessTokenController
 						$client_licence = $this->getRequestParameter('client_licence', $request, null);
 						Log::info('issueToken client_licence: '.$client_licence);
 						Log::info('issueToken hostname: '. $this->getRequestParameter('hostname', $request, null));
-						$this->licenceService->updateLicence($token, $ip, $client_licence);
+						$hostname = $this->getRequestParameter('hostname', $request, null);
+						$this->licenceService->updateLicence($token, $ip, $hostname, $client_licence);
 					}
 				}
 			

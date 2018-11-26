@@ -50,6 +50,7 @@ class TokenController extends Controller
 		Log::info('GetToken client_secret: '.$request['client_secret']);
 		Log::info('GetToken client_user: '.$request['client_user']);
 		Log::info('GetToken client_licence: '.$request['client_licence']);
+		Log::info('GetToken remoteIp: '.$request['remoteIp']);
 		
 		$client = $this->clientRepository->find($request['client_id']);
 		
@@ -68,7 +69,7 @@ class TokenController extends Controller
 			
 			if ($token) {
 				try {
-					if ($this->validateLicenceWithToken($request->ip(), $request['client_licence'], $token)) {
+					if ($this->validateLicenceWithToken($request->ip(), $request['remoteIp'], $request['client_licence'], $token)) {
 						return response()->json('OK', 200);
 					} else {
 						return response()->json('', 200);
@@ -87,9 +88,9 @@ class TokenController extends Controller
 		
     }
 	
-	protected function validateLicenceWithToken($ip, $client_licence, $token) {
+	protected function validateLicenceWithToken($ip, $remoteIp, $client_licence, $token) {
 	
-		return $this->licenceService->validateLicenceWithToken($ip, $client_licence, $token);
+		return $this->licenceService->validateLicenceWithToken($ip, $remoteIp, $client_licence, $token);
 		
 	}
 }
