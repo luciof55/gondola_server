@@ -10,14 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/clients', function () {
-    return view('clients');
-})->middleware('checkprivilege:clients')->name('clients');
 
-Route::get('/tokens', function () {
-    return view('tokens');
-})->middleware('checkprivilege:licences')->name('licences');
-
+Route::get('/clients', 'ClientLicenceController@clients')->middleware('checkprivilege:clients')->name('clients');
+Route::get('/tokens', 'ClientLicenceController@tokens')->middleware('checkprivilege:licences')->name('tokens');
 
 Route::get('/getToken', 'TokenController@getToken')->middleware('auth:api')->name('getToken');
 
