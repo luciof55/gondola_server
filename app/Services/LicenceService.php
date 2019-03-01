@@ -83,7 +83,7 @@ class LicenceService implements LicenceServiceInterface
 		}
 	}
 	
-	public function updateLicence($token, $ip, $hostname, $client_licence) {
+	public function updateLicence($token, $ip, $hostname, $macAddress, $client_licence) {
 		Log::info('LicenceService - updateLicence START');
 		
 		if (isset($token) && isset($ip) && isset($client_licence)) {
@@ -93,6 +93,7 @@ class LicenceService implements LicenceServiceInterface
 					$licence->ip = $ip;
 					$licence->token_id = $token->id;
 					$licence->hostid = $hostname;
+					$licence->macAddress = $macAddress;
 					$licence->save();
 					Log::info('updateLicence client licence updated: '.$client_licence);
 					return true;
@@ -240,7 +241,7 @@ class LicenceService implements LicenceServiceInterface
 		}
 	}
 	
-	public function validateLicenceWithToken($ip, $remoteIp, $client_licence, $token) {
+	public function validateLicenceWithToken($ip, $remoteIp, $hostname, $macAddress, $client_licence, $token) {
 		Log::info('LicenceService - validateLicenceWithToken START');
 		
 		if (isset($token) && isset($ip) && isset($client_licence)) {
@@ -255,7 +256,7 @@ class LicenceService implements LicenceServiceInterface
 					if ($ip == $licence->ip && $token->id == $licence->token->id) {
 						if ($ip != $remoteIp) {
 							//Validate remote IP and amount of licences
-							if ($licence->licence_amount > 1) {
+							if ($licence->licence_amount > 0) {
 								if (is_null($licence->remoteips)) {
 									$newRemoteIp = array('ip' => $remoteIp, 'time' => time());
 									$remoteips = array();

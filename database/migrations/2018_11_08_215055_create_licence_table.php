@@ -22,6 +22,7 @@ class CreateLicenceTable extends Migration
 			$table->foreign('token_id')->references('id')->on('oauth_access_tokens')->nullable();
 			$table->string('ip', 100)->nullable();
 			$table->string('hostid', 100)->nullable();
+			$table->string('macAddress', 100)->nullable();
 			$table->unsignedInteger('licence_amount');
 			$table->longText('remoteips')->nullable();
 			$table->softDeletes();

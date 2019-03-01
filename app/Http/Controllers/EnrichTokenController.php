@@ -64,7 +64,8 @@ class EnrichTokenController extends AccessTokenController
 						Log::info('issueToken client_licence: '.$client_licence);
 						Log::info('issueToken hostname: '. $this->getRequestParameter('hostname', $request, null));
 						$hostname = $this->getRequestParameter('hostname', $request, null);
-						$this->licenceService->updateLicence($token, $ip, $hostname, $client_licence);
+						$macAddress = $this->getRequestParameter('macAddress', $request, null);
+						$this->licenceService->updateLicence($token, $ip, $hostname, $macAddress, $client_licence);
 					}
 				}
 			
@@ -80,29 +81,6 @@ class EnrichTokenController extends AccessTokenController
 			return response()->json($result, 200);
 		}
     }
-	
-	protected function getToken($request) {
-		$client_id = $this->getRequestParameter('client_id', $request, null);
-		Log::info('GetToken client: '.$client_id);
-		
-		$client_secret = $this->getRequestParameter('client_secret', $request, null);
-		Log::info('GetToken client_secret: '.$client_secret);
-		
-		$client_user = $this->getRequestParameter('client_user', $request, null);
-		Log::info('GetToken client_user: '.$client_user);
-		
-		return $this->licenceService->getToken($client_id, $client_secret, $client_user);
-	}
-	
-	protected function updateLicence($request, $token) {
-		$client_licence = $this->getRequestParameter('client_licence', $request, null);
-		Log::info('updateLicence client_licence: '.$client_licence);
-		
-		$ip = $request->getServerParams()['REMOTE_ADDR'];
-		Log::info('updateLicence from: '.$ip);
-		
-		return $this->licenceService->updateLicence($token, $ip, $client_licence);
-	}
 	
 	protected function validateLicence($request) {
 		$client_licence = $this->getRequestParameter('client_licence', $request, null);
