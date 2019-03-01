@@ -82,6 +82,19 @@ class EnrichTokenController extends AccessTokenController
 		}
     }
 	
+	protected function getToken($request) {
+		$client_id = $this->getRequestParameter('client_id', $request, null);
+		Log::info('GetToken client: '.$client_id);
+		
+		$client_secret = $this->getRequestParameter('client_secret', $request, null);
+		Log::info('GetToken client_secret: '.$client_secret);
+		
+		$client_user = $this->getRequestParameter('client_user', $request, null);
+		Log::info('GetToken client_user: '.$client_user);
+		
+		return $this->licenceService->getToken($client_id, $client_secret, $client_user);
+	}
+	
 	protected function validateLicence($request) {
 		$client_licence = $this->getRequestParameter('client_licence', $request, null);
 		Log::info('validateLicence client_licence: '.$client_licence);
