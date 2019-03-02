@@ -181,6 +181,7 @@ class LicenceService implements LicenceServiceInterface
 					$licence->ip = null;
 					$licence->token_id = null;
 					$licence->hostid = null;
+					$licence->macAddress = null;
 					$licence->remoteips = null;
 					if ($licence->save()) {
 						Log::info('releaseLicence client licence updated: '.$licence->licence);

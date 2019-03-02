@@ -27,6 +27,7 @@
 							<th>Licence</th>
 							<th>IP</th>
 							<th>Host ID</th>
+							<th>MAC Address</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -52,6 +53,11 @@
 								<!-- HostId -->
 								<td style="vertical-align: middle;">
 									{{ licence.hostid }}
+								</td>
+								
+								<!-- MacAddress -->
+								<td style="vertical-align: middle;">
+									{{ licence.macaddress }}
 								</td>
 
 								<!-- Revoke Button -->

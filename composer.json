@@ -12,7 +12,7 @@
         "laravel/framework": "5.7.*",
 		"laravel/passport": "^7.0",
         "laravel/tinker": "^1.0",
-        "laravelcollective/html": "^5.2.0",
+        "laravelcollective/html": "5.7.1",
         "maatwebsite/excel": "^3.0"
     },
     "require-dev": {
