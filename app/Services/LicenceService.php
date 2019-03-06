@@ -257,61 +257,35 @@ class LicenceService implements LicenceServiceInterface
 					if ($ip == $licence->ip && $token->id == $licence->token->id) {
 						if ($ip != $remoteIp) {
 							//Validate remote IP and amount of licences
-							if ($licence->licence_amount > 0) {
-								if (is_null($licence->remoteips)) {
-									$newRemoteIp = array('ip' => $remoteIp, 'time' => time());
-									$remoteips = array();
-									$replacedIp = str_replace_array('.', ['', '', '', ''], $remoteIp);
-									$remoteips = array_add($remoteips, $replacedIp, $newRemoteIp);
-									Log::info($remoteips);
-									$licence->remoteips = json_encode($remoteips);
-									try {
-										$licence->save();
-										Log::info('validateLicenceWithToken Adding IP: '.$remoteIp);
-										return true;
-									} catch (Exception $e) {
-										Log::error($e);
-										return false;
-									}
-								} else {
-									$replacedIp = str_replace_array('.', ['', '', '', ''], $remoteIp);
-									$remoteips = json_decode($licence->remoteips, true);
-									if (!array_has($remoteips, $replacedIp)) {
-										$currentUsedLicences = count($remoteips);
-										//Se resta la licencia de la instalación de la góndola
-										if (($licence->licence_amount - 1) > $currentUsedLicences) {
-											$newRemoteIp = array('ip' => $remoteIp, 'time' => time());
-											$remoteips = array_add($remoteips, $replacedIp, $newRemoteIp);
-											$licence->remoteips = json_encode($remoteips);
-											try {
-												$licence->save();
-												Log::info('validateLicenceWithToken Adding IP: '.$remoteIp);
-												return true;
-											} catch (Exception $e) {
-												Log::error($e);
-												return false;
-											}
-										} else {
-											Log::info('validateLicenceWithToken not enough licences, current used: '.$currentUsedLicences);
-											return false;
-										}
-									} else {
-										Log::info('validateLicenceWithToken IP already authorized: '.$remoteIp);
-										return true;
-									}
-								}
-							} else  {
-								Log::info('validateLicenceWithToken not enough licences, only one licence allowed');
+							return $this->validateAndUpdateLicenceAmount($licence, $remoteIp);
+						} else {
+							Log::info('validateLicenceWithToken recived IP : '.$ip.' match with remote IP');
+							if ($macAddress == $licence->macaddress) {
+								Log::info('validateLicenceWithToken Mac Address match: '. $macAddress);
+								return true;
+							} else {
+								Log::info('validateLicenceWithToken recived Mac Address: '.$macAddress.' expected: '.$licence->macaddress);
 								return false;
 							}
-						} else {
-							return true;
 						}
 					} else {
 						Log::info('validateLicenceWithToken recived IP: '.$ip.' expected: '.$licence->ip);
 						Log::info('validateLicenceWithToken recived token: '.$token->id.' expected: '.$licence->token->id);
-						//IP is difernet...
-						return false;
+						//IP is differenet...
+						if ($macAddress == $licence->macaddress) {
+							try {
+								Log::info('validateLicenceWithToken Mac Address match, updating licence IP: '. $ip);
+								$licence->ip = $ip;
+								$licence->save();
+								return $this->validateLicenceWithToken($ip, $remoteIp, $hostname, $macAddress, $client_licence, $token);
+							} catch (Exception $e) {
+								Log::error($e);
+								return false;
+							}
+						} else {
+							Log::info('validateLicenceWithToken recived Mac Address: '.$macAddress.' expected: '.$licence->macaddress);
+							return false;
+						}
 					}
 				}
 			} else {
@@ -340,6 +314,52 @@ class LicenceService implements LicenceServiceInterface
 			}
 		} else {
 			return false;
+		}
+	}
+	
+	protected function validateAndUpdateLicenceAmount($licence, $remoteIp) {
+		//Validate remote IP and amount of licences
+		if (is_null($licence->remoteips)) {
+			$newRemoteIp = array('ip' => $remoteIp, 'time' => time());
+			$remoteips = array();
+			$replacedIp = str_replace_array('.', ['', '', '', ''], $remoteIp);
+			$remoteips = array_add($remoteips, $replacedIp, $newRemoteIp);
+			Log::info($remoteips);
+			$licence->remoteips = json_encode($remoteips);
+			try {
+				$licence->save();
+				Log::info('validateAndUpdateLicenceAmount Adding IP: '.$remoteIp);
+				return true;
+			} catch (Exception $e) {
+				Log::error($e);
+				return false;
+			}
+		} else {
+			$replacedIp = str_replace_array('.', ['', '', '', ''], $remoteIp);
+			$remoteips = json_decode($licence->remoteips, true);
+			if (!array_has($remoteips, $replacedIp)) {
+				$currentUsedLicences = count($remoteips);
+				//Se resta la licencia de la instalación de la góndola
+				if (($licence->licence_amount) > $currentUsedLicences) {
+					$newRemoteIp = array('ip' => $remoteIp, 'time' => time());
+					$remoteips = array_add($remoteips, $replacedIp, $newRemoteIp);
+					$licence->remoteips = json_encode($remoteips);
+					try {
+						$licence->save();
+						Log::info('validateAndUpdateLicenceAmount Adding IP: '.$remoteIp);
+						return true;
+					} catch (Exception $e) {
+						Log::error($e);
+						return false;
+					}
+				} else {
+					Log::info('validateAndUpdateLicenceAmount not enough licences, current used: '.$currentUsedLicences);
+					return false;
+				}
+			} else {
+				Log::info('validateAndUpdateLicenceAmount IP already authorized: '.$remoteIp);
+				return true;
+			}
 		}
 	}
 }
